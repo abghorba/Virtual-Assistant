@@ -3,3 +3,4 @@ env/
 .pytest_cache/
 .vscode/
 config.py
+speech.mp3
