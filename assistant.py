@@ -5,12 +5,32 @@ from time import ctime, sleep
 import json
 import requests
 import speech_recognition as sr
+import time
 
 
 class VirtualAssistant():
     def __init__(self) -> None:
         self.recognizer = sr.Recognizer()
         self.audio_player = MPyg321Player()
+
+
+    def greet(self):
+        """
+        Responds with a greeting depending on the time of day.
+        
+        :returns: None
+
+        """
+        current_time = time.localtime()
+        current_hour = current_time.tm_hour
+        if 6 <= current_hour <= 11:
+            self.respond("Good morning! What can I do for you?", 3)
+        elif 12 <= current_hour <= 16:
+            self.respond("Good afternoon! What can I do for you?", 3)
+        elif 17 <= current_hour < 20:
+            self.respond("Good evening! What can I do for you?", 3)
+        else:
+            self.respond("Good night! What can I do for you?", 3)
 
 
     def listen(self):
@@ -68,13 +88,14 @@ class VirtualAssistant():
 
             if "what time is it" in data:
                 listening = True
-                self.respond(ctime(), 5)
+                current_time = time.strftime("%I:%M %p")
+                self.respond(f"The time is {current_time}", 6)
                 
             if "stop listening" in data:
                 listening = False
-                self.respond("Listening stopped. Goodbye!", 3)
+                self.respond("Goodbye!", 2)
         else:
-            self.respond("Not a valid command. Please try again.", 3)
+            self.respond("I didn't quite get that. Please try again.", 4)
             listening = True
 
         return listening
@@ -82,7 +103,7 @@ class VirtualAssistant():
 
 def main():
     assistant = VirtualAssistant()
-    assistant.respond("Hi, what can I do for you?", 3)
+    assistant.greet()
     listening = True
     while listening == True:
         data = assistant.listen()
