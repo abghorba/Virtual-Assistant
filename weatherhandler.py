@@ -28,17 +28,18 @@ class WeatherHandler():
             print('Location could not be retrieved.')
 
 
-    def get_weather_json(self):
+    def get_weather_json(self, latitude, longitude):
         """
             Makes an API call to the OpenWeatherMAP API and retrieves the
             weather information.
 
+            :param latitude: The user's latitude.
+            :type latitdue: str
+            :param longitude: The user's longitude.
+            :type longitude: str
             :returns: json dict of weather information
 
         """
-        location = self.get_location()
-        latitude = location[2]
-        longitude = location[3]
         try:
             base_url = 'http://api.openweathermap.org/data/2.5/weather?'
             query = f'lat={latitude}&lon={longitude}&appid={OPEN_WEATHER_API_KEY}&units=imperial'
@@ -50,11 +51,27 @@ class WeatherHandler():
             print("Cannot retrieve weather information.")
 
     
-    def get_weather_information(self):
+    def check_weather(self):
         """
-            Sends the user the revelant weather information.
-
+            Parses the json response from the API call and constructs
+            a forecast which is returned to the user.
+            
             :returns: str
 
         """
-        weather_data = self.get_weather_json()
+        city, country, latitude, longitude = self.get_location()
+        weather_data = self.get_weather_json(latitude, longitude)
+
+        temperature = str(round(weather_data['main']['temp'])) #in Fahrenheit
+        condition = weather_data['weather'][0]['main']
+        description = weather_data['weather'][0]['description']
+        humidity = str(weather_data['main']['humidity']) + '%'
+        wind_speed = round(weather_data['wind']['speed'])
+
+        forecast = f"The weather in {city} is {condition} with {description}. "\
+                    f"It is currently {temperature} degrees Fahrenheit with a humidity "\
+                    f"of {humidity} and wind speeds of {wind_speed} miles per hour."
+
+        return forecast
+
+

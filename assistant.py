@@ -1,6 +1,7 @@
 from googlehandler import GoogleHandler
 from gtts import gTTS
 from playsound import playsound
+from weatherhandler import WeatherHandler
 
 import json
 import os
@@ -24,7 +25,8 @@ class VirtualAssistant():
         commands = ["how are you?", 
                     "what time is it?",
                     "where is <location>?",
-                    "search for <query>"]
+                    "search for <query>",
+                    "check the weather"]
 
         print("Here are the following commands you may ask: ")
         for command in commands:
@@ -99,7 +101,7 @@ class VirtualAssistant():
             
         """
         listening = True
-        
+
         if data:
 
             if "how are you" in data:
@@ -130,7 +132,12 @@ class VirtualAssistant():
                 self.respond(f"Hold on, I am conducting a Google search for {query}")
 
                 googl = GoogleHandler()
-                googl.google_search(query)                
+                googl.google_search(query)
+
+            if "check the weather" in data:
+                weather = WeatherHandler()
+                forecast = weather.check_weather()
+                self.respond(forecast)
 
         return listening
 
