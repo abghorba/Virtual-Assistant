@@ -1,4 +1,3 @@
-from bs4 import BeautifulSoup
 from googlehandler import GoogleHandler
 from gtts import gTTS
 from playsound import playsound
@@ -13,6 +12,24 @@ import time
 class VirtualAssistant():
     def __init__(self) -> None:
         self.recognizer = sr.Recognizer()
+
+
+    def get_commands(self):
+        """
+            Prints out the available commands to the user.
+
+            :returns: None
+
+        """
+        commands = ["how are you?", 
+                    "what time is it?",
+                    "where is <location>?",
+                    "search for <query>"]
+
+        print("Here are the following commands you may ask: ")
+        for command in commands:
+            print(command)
+        time.sleep(1)
 
 
     def greet(self):
@@ -81,24 +98,24 @@ class VirtualAssistant():
             :returns: None
             
         """
+        listening = True
+        
         if data:
+
             if "how are you" in data:
-                listening = True
                 self.respond("I am well, thanks!")
 
             if "what time is it" in data:
-                listening = True
                 current_time = time.strftime("%I:%M %p")
                 self.respond(f"The time is {current_time}")
                 
             if "stop listening" in data:
-                listening = False
                 self.respond("Goodbye!")
+                listening = False
 
             if "where is" in data:
-                listening = True
                 data = data.split(" ")
-                location = data[2]
+                location = " ".join(data[2:])
 
                 self.respond(f"Hold on, I will show you where {location} is.")
 
@@ -106,7 +123,6 @@ class VirtualAssistant():
                 googl.google_maps_search(location)
 
             if "search for" in data:
-                listening = True
                 data = data.split(" ")
                 query = data[2:]
                 query = " ".join(query)
@@ -116,9 +132,6 @@ class VirtualAssistant():
                 googl = GoogleHandler()
                 googl.google_search(query)                
 
-        else:
-            listening = True
-
         return listening
 
 
@@ -126,6 +139,7 @@ def main():
     assistant = VirtualAssistant()
     assistant.greet()
     listening = True
+    assistant.get_commands()
     while listening == True:
         data = assistant.listen()
         listening = assistant.digital_assistant(data)

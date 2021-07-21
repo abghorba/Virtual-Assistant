@@ -39,5 +39,6 @@ class GoogleHandler():
             :returns: None
 
         """
-        location_url = "https://www.google.com/maps/place/" + location
+        location = location.replace(" ", "%20")
+        location_url = "https://www.google.com/maps/place" + location
         self.open_webpage(location_url)
