@@ -2,5 +2,6 @@ __pycache__/
 env/
 .pytest_cache/
 .vscode/
+.DS_Store.
 config.py
 speech.mp3
