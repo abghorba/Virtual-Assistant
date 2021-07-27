@@ -22,7 +22,7 @@ class IMDbScraper():
             url = google.google_search(query)
             return url
         except Exception as e:
-            print('Movie could not be found')
+            print("Movie cannot be found.")
 
 
     def find_imdb(self, url):
@@ -38,14 +38,13 @@ class IMDbScraper():
             page = requests.get(url)
             html_content = page.text
             soup = BeautifulSoup(html_content, 'html.parser')
-            title = soup.find(class_="TitleHeader__TitleText-sc-1wu6n3d-0 dxSWFG").get_text()
+            title = soup.find(attrs={"data-testid":"hero-title-block__title"}).get_text()
             year = soup.find(class_="TitleBlockMetaData__ListItemText-sc-12ein40-2 jedhex").get_text()
             title = f"{title} ({year})"
             metascore = soup.find(class_="score-meta").get_text()
             return {"title": title, "metascore": metascore}
         except Exception as e:
-
-            print('Movie could not be found.')
+            print("Movie cannot be found.")
 
 
     def get_movie_info(self, query):
@@ -57,30 +56,21 @@ class IMDbScraper():
             :returns: str
 
         """
-        imdb_url = self.get_imdb_url(query)
-        imdb_info = self.find_imdb(imdb_url)
-        imdb_title = imdb_info['title']
-        metascore = imdb_info['metascore']
+        try:
+            imdb_url = self.get_imdb_url(query)
+            imdb_info = self.find_imdb(imdb_url)
+            imdb_title = imdb_info['title']
+            metascore = imdb_info['metascore']
 
-        moviesDB = imdb.IMDb()
-        movies = moviesDB.search_movie(imdb_title)
-        id = movies[0].getID()
-        movie_info = moviesDB.get_movie(id)
-        title = movie_info['title']
-        year = movie_info['year']
-        imdb_score = movie_info['rating']
+            moviesDB = imdb.IMDb()
+            movies = moviesDB.search_movie(imdb_title)
+            id = movies[0].getID()
+            movie_info = moviesDB.get_movie(id)
+            title = movie_info['title']
+            year = movie_info['year']
+            imdb_score = movie_info['rating']
 
-        review = f"{title} ({year}) has an IMDB Score of {imdb_score} and a Metascore of {metascore}."
-        return review
-
-def main():
-    query = 'breaking bad'
-   # query = 'the karate kid'
-    i = IMDbScraper()
-    url = i.get_imdb_url(query)
-    print(url)
-    stuff = i.find_imdb(url)
-    print(stuff)
-
-if __name__ == "__main__":
-    main()
+            review = f"{title} ({year}) has an IMDB Score of {imdb_score} and a Metascore of {metascore}."
+            return review
+        except Exception as e:
+            print("Movie cannot be found.")

@@ -1,6 +1,8 @@
 from googlehandler import GoogleHandler
 from gtts import gTTS
 from playsound import playsound
+from PyDictionary import PyDictionary
+from speed_test import SpeedTester
 from weatherhandler import WeatherHandler
 from imdb_scraper import IMDbScraper
 
@@ -26,7 +28,9 @@ class VirtualAssistant():
                     "where is <location>?",
                     "search for <query>",
                     "check the weather",
-                    "check ratings for <movie>"]
+                    "check ratings for <movie>",
+                    "perform a speed test",
+                    "define <English word>"]
 
         print("Here are the following commands you may ask: ")
         for command in commands:
@@ -103,45 +107,78 @@ class VirtualAssistant():
         listening = True
 
         if data:
-            if "how are you" in data:
+            if "how are you" in data.lower():
                 self.respond("I am well, thanks!")
 
-            elif "what time is it" in data:
+            elif "what time is it" in data.lower():
                 current_time = time.strftime("%I:%M %p")
-                self.respond(f"The time is {current_time}")
+                self.respond(f"The time is {current_time}.")
 
-            elif "where is" in data:
+            elif "where is" in data.lower():
                 data = data.split(" ")
                 location = " ".join(data[2:])
                 self.respond(f"Hold on, I will show you where {location} is.")
-                google = GoogleHandler()
-                url = google.google_maps_search(location)
-                google.open_webpage(url)
 
-            elif "search for" in data:
+                try:
+                    google = GoogleHandler()
+                    url = google.google_maps_search(location)
+                    google.open_webpage(url)
+                except Exception as e:
+                    self.respond(f"I cannot find the location of {location}.")
+
+            elif "search for" in data.lower():
                 data = data.split(" ")
                 query = data[2:]
                 query = " ".join(query)
-                self.respond(f"Hold on, I am conducting a Google search for {query}")
-                google = GoogleHandler()
-                url = google.google_search(query)
-                google.open_webpage(url)
+                self.respond(f"Hold on, I am conducting a Google search for {query}.")
 
-            elif "check the weather" in data:
-                weather = WeatherHandler()
-                forecast = weather.check_weather()
-                self.respond(forecast)
+                try:
+                    google = GoogleHandler()
+                    url = google.google_search(query)
+                    google.open_webpage(url)
+                except Exception as e:
+                    self.respond(f"I cannot perform the Google search for {query}.")
 
-            elif "check ratings for" in data:
+            elif "check the weather" in data.lower():
+                try:
+                    weather = WeatherHandler()
+                    forecast = weather.check_weather()
+                    self.respond(forecast)
+                except Exception as e:
+                    self.respond("I cannot retrieve the weather information.")
+
+            elif "check ratings for" in data.lower():
                 data = data.split(" ")
                 query = data[3:]
                 query = " ".join(query)
-                self.respond(f"Hold on, I am checking the ratings for {query}")
-                imdb = IMDbScraper()
-                review = imdb.get_movie_info(query)
-                self.respond(review)
+                self.respond(f"Hold on, I am checking the ratings for {query}.")
+                try:
+                    imdb = IMDbScraper()
+                    review = imdb.get_movie_info(query)
+                    self.respond(review)
+                except Exception as e:
+                    self.respond(f"I cannot find the ratings for {query}.")
 
-            elif "stop listening" in data:
+            elif "define" in data.lower():
+                data = data.split(" ")
+                word = data[2]
+                self.respond(f"I am checking the definition of {word}.")
+                try:
+                    dictionary = PyDictionary()
+                    definition = dictionary.meaning(word)
+                    self.respond(definition)
+                except Exception as e:
+                    self.respond(f"I cannot find {word} in the English dictionary.")
+
+            elif "speed test" in data.lower():
+                try:
+                    speedtest = SpeedTester()
+                    results = speedtest.speed_check()
+                    self.respond(results)
+                except Exception as e:
+                    self.respond("I cannot perform a speed test.")
+
+            elif "stop listening" in data.lower() or "goodbye" in data.lower():
                 self.respond("Goodbye!")
                 listening = False
 
