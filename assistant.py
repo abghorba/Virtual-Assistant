@@ -2,15 +2,14 @@ from googlehandler import GoogleHandler
 from gtts import gTTS
 from playsound import playsound
 from weatherhandler import WeatherHandler
+from imdb_scraper import IMDbScraper
 
-import json
-import os
-import requests
 import speech_recognition as sr
 import time
 
 
 class VirtualAssistant():
+
     def __init__(self) -> None:
         self.recognizer = sr.Recognizer()
 
@@ -57,7 +56,7 @@ class VirtualAssistant():
         """
             Activates user's microphone and takes in the user's response.
             
-            :returns: None
+            :returns: str
 
         """
         with sr.Microphone() as source:
@@ -97,47 +96,53 @@ class VirtualAssistant():
 
             :param data: The spoken user command.
             :type data: str
-            :returns: None
+            :returns: bool
             
         """
         listening = True
 
         if data:
-
             if "how are you" in data:
                 self.respond("I am well, thanks!")
 
-            if "what time is it" in data:
+            elif "what time is it" in data:
                 current_time = time.strftime("%I:%M %p")
                 self.respond(f"The time is {current_time}")
-                
-            if "stop listening" in data:
-                self.respond("Goodbye!")
-                listening = False
 
-            if "where is" in data:
+            elif "where is" in data:
                 data = data.split(" ")
                 location = " ".join(data[2:])
-
                 self.respond(f"Hold on, I will show you where {location} is.")
+                google = GoogleHandler()
+                url = google.google_maps_search(location)
+                google.open_webpage(url)
 
-                googl = GoogleHandler()
-                googl.google_maps_search(location)
-
-            if "search for" in data:
+            elif "search for" in data:
                 data = data.split(" ")
                 query = data[2:]
                 query = " ".join(query)
-
                 self.respond(f"Hold on, I am conducting a Google search for {query}")
+                google = GoogleHandler()
+                url = google.google_search(query)
+                google.open_webpage(url)
 
-                googl = GoogleHandler()
-                googl.google_search(query)
-
-            if "check the weather" in data:
+            elif "check the weather" in data:
                 weather = WeatherHandler()
                 forecast = weather.check_weather()
                 self.respond(forecast)
+
+            elif "check ratings for" in data:
+                data = data.split(" ")
+                query = data[3:]
+                query = " ".join(query)
+                self.respond(f"Hold on, I am checking the ratings for {query}")
+                imdb = IMDbScraper()
+                review = imdb.get_movie_info(query)
+                self.respond(review)
+                
+            elif "stop listening" in data:
+                self.respond("Goodbye!")
+                listening = False
 
         return listening
 

@@ -4,6 +4,7 @@ from config import OPEN_WEATHER_API_KEY
 import requests
 
 class WeatherHandler():
+    
     def get_location(self):
         """
             Scrapes information from www.iplocation.com to retrieve the user's

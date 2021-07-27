@@ -12,9 +12,12 @@ class GoogleHandler():
             :returns: None
 
         """
-        webpage = '/usr/bin/open -a "/Applications/Google Chrome.app" ' + url
-        os.system(webpage)
-        time.sleep(3)
+        try:
+            webpage = '/usr/bin/open -a "/Applications/Google Chrome.app" ' + url
+            os.system(webpage)
+            time.sleep(3)
+        except Exception as e:
+            print("Could not open webpage.")
 
 
     def google_search(self, query):
@@ -23,22 +26,27 @@ class GoogleHandler():
             Relies heavily on Google's PageRank to supply the
             correct url as the first item returned in the search.
 
-            :returns: None
+            :returns: URL as a str
 
         """
-        link = []
-        for j in search(query, tld='ca', num=10, stop=10, pause=2):
-            link.append(j)
-        self.open_webpage(link[0])
+        try:
+            link = []
+            for j in search(query, tld='ca', num=10, stop=10, pause=2):
+                link.append(j)
+            
+            return link[0]
+        except Exception as e:
+            print("Could not conduct Google search.")
 
 
     def google_maps_search(self, location):
         """
             Conducts a Google maps search with the given query.
 
-            :returns: None
+            :returns: URL as a str
 
         """
         location = location.replace(" ", "%20")
-        location_url = "https://www.google.com/maps/place" + location
-        self.open_webpage(location_url)
+        location_url = "https://www.google.com/maps/place/" + location
+
+        return location_url
