@@ -25,7 +25,8 @@ class VirtualAssistant():
                     "what time is it?",
                     "where is <location>?",
                     "search for <query>",
-                    "check the weather"]
+                    "check the weather",
+                    "check ratings for <movie>"]
 
         print("Here are the following commands you may ask: ")
         for command in commands:
@@ -139,7 +140,7 @@ class VirtualAssistant():
                 imdb = IMDbScraper()
                 review = imdb.get_movie_info(query)
                 self.respond(review)
-                
+
             elif "stop listening" in data:
                 self.respond("Goodbye!")
                 listening = False
