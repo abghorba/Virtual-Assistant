@@ -17,7 +17,7 @@ class IMDbScraper():
         
         """
         try:
-            query += ' IMDB'
+            query += ' IMDb'
             google = googlehandler.GoogleHandler()
             url = google.google_search(query)
             return url
@@ -27,7 +27,7 @@ class IMDbScraper():
 
     def find_imdb(self, url):
         """
-            Takes in a raw query and scrapes the necessary information from IMDb.
+            Takes in the movie url and scrapes the necessary information from IMDb.
 
             :param query: The Movie/TV Show query received in.
             :type query: str
@@ -47,17 +47,17 @@ class IMDbScraper():
             print("Movie cannot be found.")
 
 
-    def get_movie_info(self, query):
+    def get_movie_review(self, movie):
         """
-            Driver function to retrieve the movie information and review scores.
+            Driver function to retrieve the movie review scores.
 
-            :param query: Raw query with the Movie/TV Show being searched.
-            :type query: str
+            :param movie: Movie/TV Show being searched.
+            :type movie: str
             :returns: str
 
         """
         try:
-            imdb_url = self.get_imdb_url(query)
+            imdb_url = self.get_imdb_url(movie)
             imdb_info = self.find_imdb(imdb_url)
             imdb_title = imdb_info['title']
             metascore = imdb_info['metascore']

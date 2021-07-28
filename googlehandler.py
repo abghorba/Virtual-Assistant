@@ -9,15 +9,17 @@ class GoogleHandler():
         """
             Opens a url webpage.
 
-            :returns: None
+            :returns: bool
 
         """
         try:
             webpage = '/usr/bin/open -a "/Applications/Google Chrome.app" ' + url
             os.system(webpage)
             time.sleep(3)
+            return True
         except Exception as e:
             print("Could not open webpage.")
+            return False
 
 
     def google_search(self, query):
@@ -30,11 +32,11 @@ class GoogleHandler():
 
         """
         try:
-            link = []
-            for j in search(query, tld='ca', num=10, stop=10, pause=2):
-                link.append(j)
+            links = []
+            for url in search(query, tld='ca', num=10, stop=10, pause=2):
+                links.append(url)
             
-            return link[0]
+            return links[0]
         except Exception as e:
             print("Could not conduct Google search.")
 

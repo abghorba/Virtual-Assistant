@@ -154,7 +154,7 @@ class VirtualAssistant():
                 self.respond(f"Hold on, I am checking the ratings for {query}.")
                 try:
                     imdb = IMDbScraper()
-                    review = imdb.get_movie_info(query)
+                    review = imdb.get_movie_review(query)
                     self.respond(review)
                 except Exception as e:
                     self.respond(f"I cannot find the ratings for {query}.")
