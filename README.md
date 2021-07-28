@@ -8,22 +8,25 @@ replacing YOUR_API_KEY with an API key received from https://openweathermap.org/
         OPEN_WEATHER_API_KEY = YOUR_API_KEY
 
 Then, download the dependencies from requirements.txt:
+
         pip install -r requirements.txt
 
 <h2> Usage </h2>
 Now that we have everything set up, we are ready to go!
 
 The virtual assistant supports the following commands:
-        "how are you?", 
-        "what time is it?",
-        "where is <location>?",
-        "search for <query>",
-        "check the weather",
-        "check ratings for <movie>",
-        "perform a speed test",
-        "define <English word>"
+
+        how are you?
+        what time is it?
+        where is [location]
+        search for [query]
+        check the weather
+        check ratings for [movie]
+        perform a speed test
+        define [English word]
 
 You can run the virtual assistant by using the command
+
         python assistant.py
 
 Make sure you have a microphone to speak into! You will be able to speak the commands and will get a voice response along with a transcript on the command line.
