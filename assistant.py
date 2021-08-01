@@ -1,8 +1,7 @@
-from googletrans import Translator
 from gtts import gTTS
 from playsound import playsound
-from PyDictionary import PyDictionary
-from features import GoogleHandler, SpeedTester, IMDbScraper, WeatherHandler, YahooFinanceScraper
+from requests.sessions import DEFAULT_REDIRECT_LIMIT
+from features import GoogleHandler, SpeedTester, IMDbScraper, WeatherHandler, YahooFinanceScraper, DictionarySearcher
 
 import speech_recognition as sr
 import time
@@ -161,11 +160,11 @@ class VirtualAssistant():
             elif "define" in data.lower():
                 data = data.split(" ")
                 word = data[1]
-                self.respond(f"Okay, I am checking the definition of {word}.")
+                self.respond(f"Okay, I am checking the definitions of {word}.")
                 try:
-                    dictionary = PyDictionary()
-                    definition = dictionary.meaning(word)
-                    self.respond(definition)
+                    dictionary = DictionarySearcher()
+                    definitions = dictionary.search_definition(word) 
+                    self.respond(definitions)
                 except Exception as e:
                     self.respond(f"Sorry, I cannot find {word} in the English dictionary.")
 

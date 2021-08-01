@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
-from bs4.dammit import html_meta
 from config import OPEN_WEATHER_API_KEY
 from googlesearch import search
+from PyDictionary import PyDictionary
 
 import imdb
 import os
@@ -305,3 +305,35 @@ class YahooFinanceScraper():
             pass
         except Exception as e:
             print("Cannot retrieve information from the statistics page.")
+
+
+class DictionarySearcher():
+
+    def search_definition(self, word):
+        """
+            Looks for the definition of a word and returns all the definitions.
+
+            :param word: The word to define.
+            :type word: str
+            :returns: str
+        
+        """
+        dictionary = PyDictionary()
+        try:
+            definitions = dictionary.meaning(word)
+
+            definition_number = 1
+            definitions_text = []
+            for type in definitions:
+                for meaning in definitions[type]:
+                    current_meaning = f'{str(definition_number)}) {type}: {meaning.capitalize()}.\n'
+                    definitions_text.append(current_meaning)
+                    definition_number += 1  
+
+            return ''.join(definitions_text)
+        except Exception as e:
+            print("This word does not exist in the English dictionary.")
+
+
+class Translator():
+    pass
