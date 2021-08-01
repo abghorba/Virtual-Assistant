@@ -1,12 +1,9 @@
-import json
-import googlehandler
-import imdb_scraper
-import weatherhandler
+from features import GoogleHandler, SpeedTester, IMDbScraper, WeatherHandler, YahooFinanceScraper
 
 class TestGoogleHandler():
 
     def test_google_maps_search(self):
-        google = googlehandler.GoogleHandler()
+        google = GoogleHandler()
 
         location = "Santa Barbara"
         location_url = google.google_maps_search(location)
@@ -24,7 +21,7 @@ class TestGoogleHandler():
 
 
     def test_google_search(self):
-        google = googlehandler.GoogleHandler()
+        google = GoogleHandler()
 
         query = "Tesla stock price Yahoo Finance"
         query_url = google.google_search(query)
@@ -44,7 +41,7 @@ class TestGoogleHandler():
 class TestIMDbScraper():
 
     def test_imdb_url(self):
-        scraper = imdb_scraper.IMDbScraper()
+        scraper = IMDbScraper()
 
         movie = "the karate kid"
         imdb_url = scraper.get_imdb_url(movie)
@@ -58,7 +55,7 @@ class TestIMDbScraper():
 
 
     def test_find_imdb(self):
-        scraper = imdb_scraper.IMDbScraper()
+        scraper = IMDbScraper()
 
         movie = "the karate kid"
         imdb_url = scraper.get_imdb_url(movie)
@@ -77,7 +74,7 @@ class TestIMDbScraper():
 
 
     def test_get_movie_info(self):
-        scraper = imdb_scraper.IMDbScraper()
+        scraper = IMDbScraper()
 
         movie = "the karate kid"
         movie_review = scraper.get_movie_review(movie)
@@ -91,8 +88,9 @@ class TestIMDbScraper():
 
 
 class TestWeatherHandler():
+
     def test_get_location(self):
-        weather = weatherhandler.WeatherHandler()
+        weather = WeatherHandler()
 
         # This works for my personal location.
         # I am in Irvine, CA, USA.
@@ -104,7 +102,7 @@ class TestWeatherHandler():
         assert location[3] == "-117.8264"
 
     def test_get_weather_json(self):
-        weather = weatherhandler.WeatherHandler()
+        weather = WeatherHandler()
 
         latitude = '33.6607'
         longitude = '-117.8264'
@@ -115,10 +113,53 @@ class TestWeatherHandler():
         assert 'wind' in json_data
 
     def test_check_weather(self):
-        weather = weatherhandler.WeatherHandler()
+        weather = WeatherHandler()
 
         forecast = weather.check_weather()
         assert isinstance(forecast, str)
         assert "The weather in Irvine is" in forecast
         assert "degrees Fahrenheit with a humidity of" in forecast
         assert "wind speeds of" in forecast
+
+
+class TestYahooFinanceScraper():
+    def test_get_yahoo_finance_url(self):
+        yahoo = YahooFinanceScraper()
+
+        query = "stock price of Tesla"
+        yahoo_finance_url = yahoo.get_yahoo_finance_url(query)
+        assert isinstance(yahoo_finance_url, str)
+        assert yahoo_finance_url == "https://finance.yahoo.com/quote/TSLA/"
+
+        query = "stock price of McDonald's"
+        yahoo_finance_url = yahoo.get_yahoo_finance_url(query)
+        assert isinstance(yahoo_finance_url, str)
+        assert yahoo_finance_url == "https://finance.yahoo.com/quote/MCD/"
+
+
+    def test_get_stock_price(self):
+        yahoo = YahooFinanceScraper()
+
+        query = "stock price of Tesla"
+        stock_price_info = yahoo.get_stock_price(query)
+        assert isinstance(stock_price_info, str)
+        assert stock_price_info == "The stock price is $687.20 per share."
+
+        query = "stock price of McDonald's"
+        stock_price_info = yahoo.get_stock_price(query)
+        assert isinstance(stock_price_info, str)
+        assert stock_price_info == "The stock price is $242.71 per share."
+
+
+    def test_get_stock_statistics_url(self):
+        yahoo = YahooFinanceScraper()
+
+        query = "stock price of Tesla"
+        yahoo_finance_stats_url = yahoo.get_stock_statistics_url(query)
+        assert isinstance(yahoo_finance_stats_url, str)
+        assert yahoo_finance_stats_url == "https://finance.yahoo.com/quote/TSLA/key-statistics?p=TSLA"
+
+        query = "stock price of McDonald's"
+        yahoo_finance_stats_url = yahoo.get_stock_statistics_url(query)
+        assert isinstance(yahoo_finance_stats_url, str)
+        assert yahoo_finance_stats_url == 'https://finance.yahoo.com/quote/MCD/key-statistics?p=MCD'

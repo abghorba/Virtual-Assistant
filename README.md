@@ -28,6 +28,7 @@ The virtual assistant supports the following commands:
         check ratings for [movie]
         perform a speed test
         define [English word]
+        stock price of [company]
 
 Make sure you have a microphone to speak into! You will be able to speak the commands and will get a voice response along with a transcript on the command line.
 

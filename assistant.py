@@ -1,10 +1,8 @@
-from googlehandler import GoogleHandler
+from googletrans import Translator
 from gtts import gTTS
 from playsound import playsound
 from PyDictionary import PyDictionary
-from speed_test import SpeedTester
-from weatherhandler import WeatherHandler
-from imdb_scraper import IMDbScraper
+from features import GoogleHandler, SpeedTester, IMDbScraper, WeatherHandler, YahooFinanceScraper
 
 import speech_recognition as sr
 import time
@@ -12,9 +10,8 @@ import time
 
 class VirtualAssistant():
 
-    def __init__(self) -> None:
+    def __init__(self):
         self.recognizer = sr.Recognizer()
-
 
     def get_commands(self):
         """
@@ -30,7 +27,8 @@ class VirtualAssistant():
                     "check the weather",
                     "check ratings for <movie>",
                     "perform a speed test",
-                    "define <English word>"]
+                    "define <English word>",
+                    "stock price of <company>"]
 
         print("Here are the following commands you may ask: ")
         for command in commands:
@@ -80,7 +78,7 @@ class VirtualAssistant():
         return data
 
 
-    def respond(self, audio_string):
+    def respond(self, audio_string, language='en'):
         """
             Activates the voice response.
             
@@ -90,7 +88,7 @@ class VirtualAssistant():
             
         """
         print(audio_string)
-        tts = gTTS(text=audio_string, lang='en')
+        tts = gTTS(text=audio_string, lang=language)
         tts.save("speech.mp3")
         playsound("speech.mp3")
 
@@ -124,7 +122,7 @@ class VirtualAssistant():
                     url = google.google_maps_search(location)
                     google.open_webpage(url)
                 except Exception as e:
-                    self.respond(f"I cannot find the location of {location}.")
+                    self.respond(f"Sorry, I cannot find the location of {location}.")
 
             elif "search for" in data.lower():
                 data = data.split(" ")
@@ -137,46 +135,59 @@ class VirtualAssistant():
                     url = google.google_search(query)
                     google.open_webpage(url)
                 except Exception as e:
-                    self.respond(f"I cannot perform the Google search for {query}.")
+                    self.respond(f"Sorry, I cannot perform the Google search for {query}.")
 
             elif "check the weather" in data.lower():
+                self.respond("Okay, I am checking the weather for you right now.")
                 try:
                     weather = WeatherHandler()
                     forecast = weather.check_weather()
                     self.respond(forecast)
                 except Exception as e:
-                    self.respond("I cannot retrieve the weather information.")
+                    self.respond("Sorry, I cannot retrieve the weather information.")
 
             elif "check ratings for" in data.lower():
                 data = data.split(" ")
                 query = data[3:]
                 query = " ".join(query)
-                self.respond(f"Hold on, I am checking the ratings for {query}.")
+                self.respond(f"Okay, I am checking the ratings for {query}.")
                 try:
                     imdb = IMDbScraper()
                     review = imdb.get_movie_review(query)
                     self.respond(review)
                 except Exception as e:
-                    self.respond(f"I cannot find the ratings for {query}.")
+                    self.respond(f"Sorry, I cannot find the ratings for {query}.")
 
             elif "define" in data.lower():
                 data = data.split(" ")
-                word = data[2]
-                self.respond(f"I am checking the definition of {word}.")
+                word = data[1]
+                self.respond(f"Okay, I am checking the definition of {word}.")
                 try:
                     dictionary = PyDictionary()
                     definition = dictionary.meaning(word)
                     self.respond(definition)
                 except Exception as e:
-                    self.respond(f"I cannot find {word} in the English dictionary.")
+                    self.respond(f"Sorry, I cannot find {word} in the English dictionary.")
 
             elif "speed test" in data.lower():
+                self.respond("Okay, I will perform a speed test for you.")
                 try:
                     speedtest = SpeedTester()
                     results = speedtest.speed_check()
                     self.respond(results)
                 except Exception as e:
-                    self.respond("I cannot perform a speed test.")
+                    self.respond("Sorry, I cannot perform a speed test.")
+
+            elif "stock price" in data.lower():
+                try:
+                    yahoo = YahooFinanceScraper()
+                    stock_price_info = yahoo.get_stock_price(data)
+                    self.respond(stock_price_info)
+                except:
+                    self.respond("I cannot find the stock price.")
+
+            elif "translate" in data.lower():
+                pass
 
             elif "stop listening" in data.lower() or "goodbye" in data.lower():
                 self.respond("Goodbye!")
