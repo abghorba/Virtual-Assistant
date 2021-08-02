@@ -1,7 +1,6 @@
 from gtts import gTTS
 from playsound import playsound
-from requests.sessions import DEFAULT_REDIRECT_LIMIT
-from features import GoogleHandler, SpeedTester, IMDbScraper, WeatherHandler, YahooFinanceScraper, DictionarySearcher
+from features import GoogleHandler, SpeedTester, IMDbScraper, TranslatorHandler, WeatherHandler, YahooFinanceScraper, DictionarySearcher
 
 import speech_recognition as sr
 import time
@@ -11,6 +10,17 @@ class VirtualAssistant():
 
     def __init__(self):
         self.recognizer = sr.Recognizer()
+        self.COMMANDS = ["how are you?", 
+                        "what time is it?",
+                        "where is <location>?",
+                        "search for <query>",
+                        "check the weather",
+                        "check ratings for <movie>",
+                        "perform a speed test",
+                        "define <English word>",
+                        "stock price of <company>",
+                        "translate <text> to <language>"]
+
 
     def get_commands(self):
         """
@@ -19,18 +29,8 @@ class VirtualAssistant():
             :returns: None
 
         """
-        commands = ["how are you?", 
-                    "what time is it?",
-                    "where is <location>?",
-                    "search for <query>",
-                    "check the weather",
-                    "check ratings for <movie>",
-                    "perform a speed test",
-                    "define <English word>",
-                    "stock price of <company>"]
-
         print("Here are the following commands you may ask: ")
-        for command in commands:
+        for command in self.COMMANDS:
             print(command)
         time.sleep(1)
 
@@ -178,15 +178,30 @@ class VirtualAssistant():
                     self.respond("Sorry, I cannot perform a speed test.")
 
             elif "stock price" in data.lower():
+                stock = data.split(" ")[-1]
+                self.respond(f"Okay, I will find the stock price of {stock}")
                 try:
                     yahoo = YahooFinanceScraper()
                     stock_price_info = yahoo.get_stock_price(data)
                     self.respond(stock_price_info)
                 except:
-                    self.respond("I cannot find the stock price.")
+                    self.respond(f"Sorry, I cannot find the stock price of {stock}.")
 
             elif "translate" in data.lower():
-                pass
+                data = data.split(" ")
+                language = data[-1]
+                text = ' '.join(data[1:-2])
+                self.respond(f"Okay, I will translate {text} to {language}.")
+                try:
+                    translator = TranslatorHandler()
+                    translated, pronunciation, language_code = translator.translate(text, language.lower())
+                    if pronunciation is None:
+                        print(translated)
+                    else:
+                        print(pronunciation)
+                    self.respond(translated, language=language_code)
+                except Exception as e:
+                    self.respond("Sorry, I cannot do this translation.")
 
             elif "stop listening" in data.lower() or "goodbye" in data.lower():
                 self.respond("Goodbye!")

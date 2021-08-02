@@ -1,5 +1,4 @@
-from PyDictionary.core import PyDictionary
-from features import GoogleHandler, SpeedTester, IMDbScraper, WeatherHandler, YahooFinanceScraper, DictionarySearcher, Translator
+from features import GoogleHandler, SpeedTester, IMDbScraper, TranslatorHandler, WeatherHandler, YahooFinanceScraper, DictionarySearcher
 
 class TestGoogleHandler():
 
@@ -121,6 +120,7 @@ class TestWeatherHandler():
         assert "The weather in Irvine is" in forecast
         assert "degrees Fahrenheit with a humidity of" in forecast
         assert "wind speeds of" in forecast
+        print(forecast)
 
 
 class TestYahooFinanceScraper():
@@ -145,11 +145,13 @@ class TestYahooFinanceScraper():
         stock_price_info = yahoo.get_stock_price(query)
         assert isinstance(stock_price_info, str)
         assert stock_price_info == "The stock price is $687.20 per share."
+        print(stock_price_info)
 
         query = "stock price of McDonald's"
         stock_price_info = yahoo.get_stock_price(query)
         assert isinstance(stock_price_info, str)
         assert stock_price_info == "The stock price is $242.71 per share."
+        print(stock_price_info)
 
 
     def test_get_stock_statistics_url(self):
@@ -188,5 +190,29 @@ class TestDictionarySearcher():
 
 
 class TestTranslator():
-    pass
+    
+    def test_translate(self):
+        translator = TranslatorHandler()
+        text = 'Hello, world!'
+        translated_text = translator.translate(text, 'spanish')
+        assert translated_text[0] == '¡Hola Mundo!'
+        assert translated_text[1] is None
+        assert translated_text[2] == 'es'
+        translated_text = translator.translate(text, 'french')
+        assert translated_text[0] == 'Bonjour le monde!'
+        assert translated_text[1] is None
+        assert translated_text[2] == 'fr'
 
+        text = 'Thank you for testing the virtual assistant.'
+        translated_text = translator.translate(text, 'russian')
+        assert translated_text[0] == 'Спасибо за тестирование виртуального помощника.'
+        assert translated_text[1] == 'Spasibo za testirovaniye virtual\'nogo pomoshchnika.'
+        assert translated_text[2] == 'ru' 
+
+class TestSpeedTester():
+
+    def test_speed_test(self):
+        speedtest_ = SpeedTester()
+        speedtest_result = speedtest_.speed_check()
+        assert isinstance(speedtest_result, str)
+        print(speedtest_result)

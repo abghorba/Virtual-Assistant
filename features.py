@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from config import OPEN_WEATHER_API_KEY
 from googlesearch import search
+from googletrans import Translator, LANGCODES
 from PyDictionary import PyDictionary
 
 import imdb
@@ -335,5 +336,23 @@ class DictionarySearcher():
             print("This word does not exist in the English dictionary.")
 
 
-class Translator():
-    pass
+class TranslatorHandler():
+    
+    def translate(self, text, language):
+        """
+            Takes a text string and translates to language of choice.
+
+            :param text: The English text to translate.
+            :type text: str
+            :param language: The word to define.
+            :type language: str
+            :returns: list
+        
+        """
+        try:
+            translator = Translator()
+            language_code = LANGCODES[language]
+            translated_text = translator.translate(text, src='en', dest=language_code)
+            return [translated_text.text, translated_text.pronunciation, language_code]
+        except Exception as e:
+            print("This text cannot be translated.")
