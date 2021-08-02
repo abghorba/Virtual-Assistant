@@ -29,6 +29,7 @@ The virtual assistant supports the following commands:
         perform a speed test
         define [English word]
         stock price of [company]
+        translate [text] to [language]
 
 Make sure you have a microphone to speak into! You will be able to speak the commands and will get a voice response along with a transcript on the command line.
 
