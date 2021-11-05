@@ -66,7 +66,6 @@ class TestIMDbScraper():
 
         movie = "silence of the lambs"
         imdb_url = scraper.get_imdb_url(movie)
-        imdb_url = scraper.get_imdb_url(movie)
         imdb_info = scraper.find_imdb(imdb_url)
         assert isinstance(imdb_info, dict)
         assert len(imdb_info) == 2

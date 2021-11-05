@@ -1,37 +1,37 @@
+import imdb, os, requests, speedtest, time
 from bs4 import BeautifulSoup
 from config import OPEN_WEATHER_API_KEY
 from googlesearch import search
 from googletrans import Translator, LANGCODES
 from PyDictionary import PyDictionary
 
-import imdb
-import os
-import requests
-import speedtest
-import time
 
-
-class WeatherHandler():
-    
+class WeatherHandler():  
     def get_location(self):
         """
-            Scrapes information from www.iplocation.com to retrieve the user's
-            location by using the user's IP Address. If user is using a VPN, then
-            this will not work, as the IP Address will be that of the VPN Server.
+        Scrapes information from www.iplocation.com to
+        retrieve the user's location by using the user's
+        IP Address. If user is using a VPN, then this will 
+        not work, as the IP Address will be the VPN Server's.
 
-            :returns: List containing the city, country, and latitude/longitude
-            coordinates.
+        Parameters
+        ----------
+        None
 
+        Returns
+        -------
+        location : list
+            A list containing the city, latitude,
+            and longitude of the user.
         """
         try:
             url = 'https://iplocation.com/'
             page = requests.get(url)
             soup = BeautifulSoup(page.content, 'html.parser')
             city = soup.find(class_='city').get_text()
-            country = soup.find(class_='country_name').get_text()
             latitude = soup.find(class_='lat').get_text()
             longitude = soup.find(class_='lng').get_text()
-            location = [city, country, latitude, longitude]
+            location = [city, latitude, longitude]
             return location
         except Exception as e:
             print('Location could not be retrieved.')
@@ -39,15 +39,20 @@ class WeatherHandler():
 
     def get_weather_json(self, latitude, longitude):
         """
-            Makes an API call to the OpenWeatherMAP API and retrieves the
-            weather information.
+        Makes an API call to the OpenWeatherMAP API and 
+        retrieves the weather information.
 
-            :param latitude: The user's latitude.
-            :type latitdue: str
-            :param longitude: The user's longitude.
-            :type longitude: str
-            :returns: json dict of weather information
+        Parameters
+        ----------
+        latitude : str
+            The user's latitude.
+        longitude : str
+            The user's longitude.
 
+        Returns
+        -------
+        data : json
+            JSON containing the weather information.
         """
         try:
             base_url = 'http://api.openweathermap.org/data/2.5/weather?'
@@ -62,13 +67,20 @@ class WeatherHandler():
     
     def check_weather(self):
         """
-            Parses the json response from the API call and constructs
-            a forecast which is returned to the user.
-            
-            :returns: str
+        Parses the json response from the API call
+        and constructs a forecast which is returned
+        to the user.
 
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        forecast : str
+            A string containing the weather forecast.
         """
-        city, country, latitude, longitude = self.get_location()
+        city, latitude, longitude = self.get_location()
         weather_data = self.get_weather_json(latitude, longitude)
 
         temperature = str(round(weather_data['main']['temp'])) #in Fahrenheit
@@ -85,49 +97,74 @@ class WeatherHandler():
 
 
 class GoogleHandler():
-
     def open_webpage(self, url):
         """
-            Opens a url webpage.
+        Opens a url webpage on Google Chrome.
 
-            :returns: bool
+        Parameters
+        ----------
+        None
 
+        Returns
+        -------
+        success : boolean
+            Returns true if the webpage opens
+            in Google Chrome successfully.
         """
+        success = False
         try:
             webpage = '/usr/bin/open -a "/Applications/Google Chrome.app" ' + url
             os.system(webpage)
             time.sleep(3)
-            return True
+            sucess = True
         except Exception as e:
             print("Could not open webpage.")
-            return False
+        
+        return success
 
 
     def google_search(self, query):
         """
-            Conducts a Google search with the given query.
-            Relies heavily on Google's PageRank to supply the
-            correct url as the first item returned in the search.
+        Conducts a Google search with the given query.
+        Relies heavily on Google's PageRank to supply the
+        correct url as the first item returned in the search.
 
-            :returns: URL as a str
+        Parameters
+        ----------
+        query : str
+            The query that is to be Google searched.
 
+        Returns
+        -------
+        url_link : str
+            A string containing first url from the Google search.
         """
+        url_link = ""
+
         try:
             links = []
             for url in search(query, tld='ca', num=10, stop=10, pause=2):
                 links.append(url)
-            
-            return links[0]
+            url_link = links[0]
         except Exception as e:
             print("Could not conduct Google search.")
+        
+        return url_link
 
 
     def google_maps_search(self, location):
         """
-            Conducts a Google maps search with the given query.
+        Conducts a Google Maps search with the given query.
 
-            :returns: URL as a str
+        Parameters
+        ----------
+        location : str
+            The location that is to be searched on Google Maps.
 
+        Returns
+        -------
+        location_url : str
+            A string containing the Google maps url.
         """
         location = location.replace(" ", "%20")
         location_url = "https://www.google.com/maps/place/" + location
@@ -136,35 +173,51 @@ class GoogleHandler():
 
 
 class IMDbScraper():
-
     def get_imdb_url(self, query):
         """
-            Takes in a raw query and conducts a Google search to retrieve
-            the correct url.
+        Takes in a raw query and conducts a Google
+        search to retrieve the correct url.
 
-            :param query: Movie/TV Show to search
-            :type query: str
-            :returns: str
-        
+        Parameters
+        ----------
+        query : str
+            The Movie/TV show to search.
+
+        Returns
+        -------
+        imdb_url : str
+            A string containing the IMDb URL.        
         """
+        imdb_url = ""
         try:
             query += ' IMDb'
             google = GoogleHandler()
             imdb_url = google.google_search(query)
-            return imdb_url
         except Exception as e:
             print("Movie cannot be found.")
+        
+        return imdb_url
 
 
     def find_imdb(self, imdb_url):
         """
-            Takes in the movie url and scrapes the necessary information from IMDb.
+        Takes in the movie url and scrapes the
+        necessary information from IMDb.
 
-            :param imdb_url: The url of the IMDb website.
-            :type imdb_url: str
-            :returns: dict
+        Parameters
+        ----------
+        imdb_url : str
+            The url of the IMDb website.
 
+        Returns
+        -------
+        location_url : str
+            A string containing the Google maps url.
         """
+        rating = {
+            "title": "",
+            "metascore": ""
+        }
         try:
             page = requests.get(imdb_url)
             html_content = page.text
@@ -173,20 +226,29 @@ class IMDbScraper():
             year = soup.find(class_="TitleBlockMetaData__ListItemText-sc-12ein40-2 jedhex").get_text()
             title = f"{title} ({year})"
             metascore = soup.find(class_="score-meta").get_text()
-            return {"title": title, "metascore": metascore}
+            rating["title"] = title
+            rating["metascore"] = metascore
         except Exception as e:
             print("Movie cannot be found.")
+        
+        return rating
 
 
     def get_movie_review(self, movie):
         """
-            Driver function to retrieve the movie review scores.
+        Driver function to retrieve the movie review scores.
 
-            :param movie: Movie/TV Show being searched.
-            :type movie: str
-            :returns: str
+        Parameters
+        ----------
+        movie : str
+            Movie/TV Show being searched.
 
+        Returns
+        -------
+        review : str
+            A string containing the movie/TV show review.
         """
+        review = ""
         try:
             imdb_url = self.get_imdb_url(movie)
             imdb_info = self.find_imdb(imdb_url)
@@ -202,14 +264,28 @@ class IMDbScraper():
             imdb_score = movie_info['rating']
 
             review = f"{title} ({year}) has an IMDB Score of {imdb_score} and a Metascore of {metascore}."
-            return review
         except Exception as e:
             print("Movie cannot be found.")
 
+        return review
+
 
 class SpeedTester():
-
     def speed_check(self):
+        """
+        Performs a speed test, which tests for the
+        upload, download, and ping.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        speedtest_result : str
+            The results of the speed test.      
+        """
+        speedtest_result = ""
         try:
             print('Testing...')
             s = speedtest.Speedtest()
@@ -238,41 +314,55 @@ class SpeedTester():
             print(f'Download speed  : {speed[0]} mpbs\nUpload speed : {speed[1]} mpbs\nPing : {speed[2]} ms ')
 
             speedtest_result = f'Download speed is {speed[0]} megabytes per second. Upload speed is {speed[1]} megabytes per second. Ping is {speed[2]} milliseconds.'
-            return speedtest_result
         except Exception as e:
             print("Could not execute speedtest.")
+        
+        return speedtest_result
 
 
 class YahooFinanceScraper():
-
     def get_yahoo_finance_url(self, query):
         """
-            Takes in a raw query and conducts a Google search to retrieve
-            the correct url.
+        Takes in a raw query and conducts a Google 
+        search to retrieve the correct url.
 
-            :param query: The company we are trying to find the stock price for.
-            :type query: str
-            :returns: str
-        
+        Parameters
+        ----------
+        query : str
+            Company whose stock price to search for.
+
+        Returns
+        -------
+        yahoo_finance_url : str
+            The URL of the company's Yahoo Finance
+            webpage.      
         """
+        yahoo_finance_url = ""
         try:
-            query += ' Yahoo finance'
+            query += ' Yahoo Finance'
             google = GoogleHandler()
             yahoo_finance_url = google.google_search(query)
-            return yahoo_finance_url
         except Exception as e:
-            print("This company is not found on Yahoo finance.")
+            print("This company is not found on Yahoo Finance.")
+        
+        return yahoo_finance_url
 
 
     def get_stock_price(self, query):
         """
-            Scrapes the Yahoo Finance website for the stock price.
+        Scrapes the Yahoo Finance website for the stock price.
 
-            :param query: The company we are trying to find the stock price for.
-            :type query: str
-            :returns: str
-        
+        Parameters
+        ----------
+        query : str
+            Company whose stock price to search for.
+
+        Returns
+        -------
+        stock_price_information : str
+            String containg the company's stock price.       
         """
+        stock_price_information = ""
         try:
             yahoo_finance_url = self.get_yahoo_finance_url(query)
             page = requests.get(yahoo_finance_url)
@@ -280,45 +370,29 @@ class YahooFinanceScraper():
             soup = BeautifulSoup(html_content, 'html.parser')
             stock_price = soup.find(class_="Trsdu(0.3s) Fw(b) Fz(36px) Mb(-4px) D(ib)").get_text()
             stock_price_information = f'The stock price is ${stock_price} per share.'
-            return stock_price_information
         except Exception as e:
             print("Stock price cannot be retrieved.")
 
-
-    def get_stock_statistics_url(self, query):
-        try:
-            yahoo_finance_url = self.get_yahoo_finance_url(query)
-            yahoo_finance_url_list = yahoo_finance_url.split("/")
-            ticker = yahoo_finance_url_list[4]
-            yahoo_finance_statistics_url = yahoo_finance_url + f'key-statistics?p={ticker}'
-            return yahoo_finance_statistics_url
-        except Exception as e:
-            print("The statistics url cannot be retrieved.")
-
-
-    def get_stock_statistics_info(self, query):
-        try:
-            yahoo_finance_statistics_url = self.get_stock_statistics_url(query)
-            page = requests.get(yahoo_finance_statistics_url)
-            html_content = page.text
-            soup = BeautifulSoup(html_content, 'html.parser')
-            valuation_measures_df = pd.read_html(soup, attrs={'class': 'W(100%) Bdcl(c)  M(0) Whs(n) BdEnd Bdc($seperatorColor) D(itb)'})
-            pass
-        except Exception as e:
-            print("Cannot retrieve information from the statistics page.")
+        return stock_price_information
 
 
 class DictionarySearcher():
-
     def search_definition(self, word):
         """
-            Looks for the definition of a word and returns all the definitions.
+        Looks for the definition of a word and
+        returns all the definitions.
 
-            :param word: The word to define.
-            :type word: str
-            :returns: str
-        
+        Parameters
+        ----------
+        word : str
+            The word we want to define.
+
+        Returns
+        -------
+        definition : str
+            String containg word's definition.          
         """
+        definition = ""
         dictionary = PyDictionary()
         try:
             definitions = dictionary.meaning(word)
@@ -331,28 +405,38 @@ class DictionarySearcher():
                     definitions_text.append(current_meaning)
                     definition_number += 1  
 
-            return ''.join(definitions_text)
+            definition = ''.join(definitions_text)
         except Exception as e:
             print("This word does not exist in the English dictionary.")
+        
+        return definition
 
 
 class TranslatorHandler():
-    
     def translate(self, text, language):
         """
-            Takes a text string and translates to language of choice.
+        Takes a text string and translates to
+        language of choice.
 
-            :param text: The English text to translate.
-            :type text: str
-            :param language: The word to define.
-            :type language: str
-            :returns: list
-        
+        Parameters
+        ----------
+        text : str
+            The English text to translate.
+        language : str
+            The language to translate to.
+
+        Returns
+        -------
+        translated : list
+            Details of the translation.      
         """
+        translated = []
         try:
             translator = Translator()
             language_code = LANGCODES[language]
             translated_text = translator.translate(text, src='en', dest=language_code)
-            return [translated_text.text, translated_text.pronunciation, language_code]
+            translated = [translated_text.text, translated_text.pronunciation, language_code]
         except Exception as e:
             print("This text cannot be translated.")
+        
+        return translated
