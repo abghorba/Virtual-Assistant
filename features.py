@@ -24,6 +24,7 @@ class WeatherHandler():
             A list containing the city, latitude,
             and longitude of the user.
         """
+        location = []
         try:
             url = 'https://iplocation.com/'
             page = requests.get(url)
@@ -32,9 +33,10 @@ class WeatherHandler():
             latitude = soup.find(class_='lat').get_text()
             longitude = soup.find(class_='lng').get_text()
             location = [city, latitude, longitude]
-            return location
-        except Exception as e:
+        except Exception:
             print('Location could not be retrieved.')
+        
+        return location
 
 
     def get_weather_json(self, latitude, longitude):
@@ -54,6 +56,7 @@ class WeatherHandler():
         data : json
             JSON containing the weather information.
         """
+        data = {}
         try:
             base_url = 'http://api.openweathermap.org/data/2.5/weather?'
             query = f'lat={latitude}&lon={longitude}&appid={OPEN_WEATHER_API_KEY}&units=imperial'
@@ -61,8 +64,10 @@ class WeatherHandler():
             response = requests.get(url)
             data = response.json()
             return data
-        except Exception as e:
+        except Exception:
             print("Cannot retrieve weather information.")
+
+        return data
 
     
     def check_weather(self):
@@ -111,13 +116,16 @@ class GoogleHandler():
             Returns true if the webpage opens
             in Google Chrome successfully.
         """
+        if not url:
+            raise ValueError("Parameter 'url' cannot be blank.")
+
         success = False
         try:
             webpage = '/usr/bin/open -a "/Applications/Google Chrome.app" ' + url
             os.system(webpage)
             time.sleep(3)
-            sucess = True
-        except Exception as e:
+            success = True
+        except Exception:
             print("Could not open webpage.")
         
         return success
@@ -139,14 +147,16 @@ class GoogleHandler():
         url_link : str
             A string containing first url from the Google search.
         """
-        url_link = ""
+        if not query:
+            raise ValueError("Parameter 'query' cannot be blank.")
 
+        url_link = ""
         try:
             links = []
             for url in search(query, tld='ca', num=10, stop=10, pause=2):
                 links.append(url)
             url_link = links[0]
-        except Exception as e:
+        except Exception:
             print("Could not conduct Google search.")
         
         return url_link
@@ -166,6 +176,9 @@ class GoogleHandler():
         location_url : str
             A string containing the Google maps url.
         """
+        if not location:
+            raise ValueError("Parameter 'location' cannot be blank.")
+
         location = location.replace(" ", "%20")
         location_url = "https://www.google.com/maps/place/" + location
 
@@ -173,27 +186,30 @@ class GoogleHandler():
 
 
 class IMDbScraper():
-    def get_imdb_url(self, query):
+    def get_imdb_url(self, movie_title):
         """
-        Takes in a raw query and conducts a Google
+        Takes in a movie name and conducts a Google
         search to retrieve the correct url.
 
         Parameters
         ----------
-        query : str
-            The Movie/TV show to search.
+        movie_title: str
+            The movie to search.
 
         Returns
         -------
         imdb_url : str
             A string containing the IMDb URL.        
         """
+        if not movie_title:
+            raise ValueError("Parameter 'movie_title' cannot be blank.")
+
         imdb_url = ""
         try:
-            query += ' IMDb'
+            movie_title += ' IMDb'
             google = GoogleHandler()
-            imdb_url = google.google_search(query)
-        except Exception as e:
+            imdb_url = google.google_search(movie_title)
+        except Exception:
             print("Movie cannot be found.")
         
         return imdb_url
@@ -228,29 +244,32 @@ class IMDbScraper():
             metascore = soup.find(class_="score-meta").get_text()
             rating["title"] = title
             rating["metascore"] = metascore
-        except Exception as e:
+        except Exception:
             print("Movie cannot be found.")
         
         return rating
 
 
-    def get_movie_review(self, movie):
+    def get_movie_review(self, movie_title):
         """
         Driver function to retrieve the movie review scores.
 
         Parameters
         ----------
-        movie : str
-            Movie/TV Show being searched.
+        movie_title : str
+            Movie being searched.
 
         Returns
         -------
         review : str
-            A string containing the movie/TV show review.
+            A string containing the movie review.
         """
+        if not movie_title:
+            raise ValueError("Parameter 'movie_title' cannot be blank.")
+
         review = ""
         try:
-            imdb_url = self.get_imdb_url(movie)
+            imdb_url = self.get_imdb_url(movie_title)
             imdb_info = self.find_imdb(imdb_url)
             imdb_title = imdb_info['title']
             metascore = imdb_info['metascore']
@@ -264,7 +283,7 @@ class IMDbScraper():
             imdb_score = movie_info['rating']
 
             review = f"{title} ({year}) has an IMDB Score of {imdb_score} and a Metascore of {metascore}."
-        except Exception as e:
+        except Exception:
             print("Movie cannot be found.")
 
         return review
@@ -314,7 +333,7 @@ class SpeedTester():
             print(f'Download speed  : {speed[0]} mpbs\nUpload speed : {speed[1]} mpbs\nPing : {speed[2]} ms ')
 
             speedtest_result = f'Download speed is {speed[0]} megabytes per second. Upload speed is {speed[1]} megabytes per second. Ping is {speed[2]} milliseconds.'
-        except Exception as e:
+        except Exception:
             print("Could not execute speedtest.")
         
         return speedtest_result
@@ -337,12 +356,15 @@ class YahooFinanceScraper():
             The URL of the company's Yahoo Finance
             webpage.      
         """
+        if not query:
+            raise ValueError("Parameter 'query' cannot be blank.")
+
         yahoo_finance_url = ""
         try:
             query += ' Yahoo Finance'
             google = GoogleHandler()
             yahoo_finance_url = google.google_search(query)
-        except Exception as e:
+        except Exception:
             print("This company is not found on Yahoo Finance.")
         
         return yahoo_finance_url
@@ -362,6 +384,9 @@ class YahooFinanceScraper():
         stock_price_information : str
             String containg the company's stock price.       
         """
+        if not query:
+            raise ValueError("Parameter 'query' cannot be blank.")
+
         stock_price_information = ""
         try:
             yahoo_finance_url = self.get_yahoo_finance_url(query)
@@ -370,7 +395,7 @@ class YahooFinanceScraper():
             soup = BeautifulSoup(html_content, 'html.parser')
             stock_price = soup.find(class_="Trsdu(0.3s) Fw(b) Fz(36px) Mb(-4px) D(ib)").get_text()
             stock_price_information = f'The stock price is ${stock_price} per share.'
-        except Exception as e:
+        except Exception:
             print("Stock price cannot be retrieved.")
 
         return stock_price_information
@@ -392,6 +417,9 @@ class DictionarySearcher():
         definition : str
             String containg word's definition.          
         """
+        if not word:
+            raise ValueError("Parameter 'word' cannot be blank.")
+
         definition = ""
         dictionary = PyDictionary()
         try:
@@ -406,7 +434,7 @@ class DictionarySearcher():
                     definition_number += 1  
 
             definition = ''.join(definitions_text)
-        except Exception as e:
+        except Exception:
             print("This word does not exist in the English dictionary.")
         
         return definition
@@ -430,13 +458,18 @@ class TranslatorHandler():
         translated : list
             Details of the translation.      
         """
+        if not text:
+            raise ValueError("Text cannot be blank.")
+        if not language:
+            raise ValueError("Language cannot be blank.")
+
         translated = []
         try:
             translator = Translator()
             language_code = LANGCODES[language]
             translated_text = translator.translate(text, src='en', dest=language_code)
             translated = [translated_text.text, translated_text.pronunciation, language_code]
-        except Exception as e:
+        except Exception:
             print("This text cannot be translated.")
         
         return translated
