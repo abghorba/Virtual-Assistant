@@ -1,32 +1,40 @@
 from gtts import gTTS
 from playsound import playsound
-from features import GoogleHandler, SpeedTester, IMDbScraper, TranslatorHandler, WeatherHandler, YahooFinanceScraper, DictionarySearcher
+from features import (
+    GoogleHandler,
+    SpeedTester,
+    IMDbScraper,
+    TranslatorHandler,
+    WeatherHandler,
+    YahooFinanceScraper,
+    DictionarySearcher,
+)
 
 import speech_recognition as sr
 import time
 
 
-class VirtualAssistant():
-
+class VirtualAssistant:
     def __init__(self):
         self.recognizer = sr.Recognizer()
-        self.COMMANDS = ["how are you?", 
-                        "what time is it?",
-                        "where is <location>?",
-                        "search for <query>",
-                        "check the weather",
-                        "check ratings for <movie>",
-                        "perform a speed test",
-                        "define <English word>",
-                        "stock price of <company>",
-                        "translate <text> to <language>"]
-
+        self.COMMANDS = [
+            "how are you?",
+            "what time is it?",
+            "where is <location>?",
+            "search for <query>",
+            "check the weather",
+            "check ratings for <movie>",
+            "perform a speed test",
+            "define <English word>",
+            "stock price of <company>",
+            "translate <text> to <language>",
+        ]
 
     def get_commands(self):
         """
-            Prints out the available commands to the user.
+        Prints out the available commands to the user.
 
-            :returns: None
+        :returns: None
 
         """
         print("Here are the following commands you may ask: ")
@@ -34,31 +42,37 @@ class VirtualAssistant():
             print(command)
         time.sleep(1)
 
-
     def greet(self):
         """
-            Responds with a greeting depending on the time of day.
-            
-            :returns: None
+        Responds with a greeting depending on the time of day.
+
+        :returns: None
 
         """
         current_time = time.localtime()
         current_hour = current_time.tm_hour
         if 6 <= current_hour <= 11:
-            self.respond("Good morning! I'm Marius, your virtual assistant. What can I do for you?")
+            self.respond(
+                "Good morning! I'm Marius, your virtual assistant. What can I do for you?"
+            )
         elif 12 <= current_hour <= 16:
-            self.respond("Good afternoon! I'm Marius, your virtual assistant. What can I do for you?")
+            self.respond(
+                "Good afternoon! I'm Marius, your virtual assistant. What can I do for you?"
+            )
         elif 17 <= current_hour < 20:
-            self.respond("Good evening! I'm Marius, your virtual assistant. What can I do for you?")
+            self.respond(
+                "Good evening! I'm Marius, your virtual assistant. What can I do for you?"
+            )
         else:
-            self.respond("Good night! I'm Marius, your virtual assistant. What can I do for you?")
-
+            self.respond(
+                "Good night! I'm Marius, your virtual assistant. What can I do for you?"
+            )
 
     def listen(self):
         """
-            Activates user's microphone and takes in the user's response.
-            
-            :returns: str
+        Activates user's microphone and takes in the user's response.
+
+        :returns: str
 
         """
         with sr.Microphone() as source:
@@ -76,30 +90,28 @@ class VirtualAssistant():
             self.respond("Say that again please.")
         return data
 
-
-    def respond(self, audio_string, language='en'):
+    def respond(self, audio_string, language="en"):
         """
-            Activates the voice response.
-            
-            :param audio_string: The audio string from the user.
-            :type audio_string: str
-            :returns: None
-            
+        Activates the voice response.
+
+        :param audio_string: The audio string from the user.
+        :type audio_string: str
+        :returns: None
+
         """
         print(audio_string)
         tts = gTTS(text=audio_string, lang=language)
         tts.save("speech.mp3")
         playsound("speech.mp3")
 
-
     def digital_assistant(self, data):
         """
-            Handles the responses for user commands.
+        Handles the responses for user commands.
 
-            :param data: The spoken user command.
-            :type data: str
-            :returns: bool
-            
+        :param data: The spoken user command.
+        :type data: str
+        :returns: bool
+
         """
         listening = True
 
@@ -134,7 +146,9 @@ class VirtualAssistant():
                     url = google.google_search(query)
                     google.open_webpage(url)
                 except Exception as e:
-                    self.respond(f"Sorry, I cannot perform the Google search for {query}.")
+                    self.respond(
+                        f"Sorry, I cannot perform the Google search for {query}."
+                    )
 
             elif "check the weather" in data.lower():
                 self.respond("Okay, I am checking the weather for you right now.")
@@ -163,10 +177,12 @@ class VirtualAssistant():
                 self.respond(f"Okay, I am checking the definitions of {word}.")
                 try:
                     dictionary = DictionarySearcher()
-                    definitions = dictionary.search_definition(word) 
+                    definitions = dictionary.search_definition(word)
                     self.respond(definitions)
                 except Exception as e:
-                    self.respond(f"Sorry, I cannot find {word} in the English dictionary.")
+                    self.respond(
+                        f"Sorry, I cannot find {word} in the English dictionary."
+                    )
 
             elif "speed test" in data.lower():
                 self.respond("Okay, I will perform a speed test for you.")
@@ -190,11 +206,13 @@ class VirtualAssistant():
             elif "translate" in data.lower():
                 data = data.split(" ")
                 language = data[-1]
-                text = ' '.join(data[1:-2])
+                text = " ".join(data[1:-2])
                 self.respond(f"Okay, I will translate {text} to {language}.")
                 try:
                     translator = TranslatorHandler()
-                    translated, pronunciation, language_code = translator.translate(text, language.lower())
+                    translated, pronunciation, language_code = translator.translate(
+                        text, language.lower()
+                    )
                     if pronunciation is None:
                         print(translated)
                     else:
