@@ -1,23 +1,27 @@
-from gtts import gTTS
-from playsound import playsound
-from features import (
-    GoogleHandler,
-    SpeedTester,
-    IMDbScraper,
-    TranslatorHandler,
-    WeatherHandler,
-    YahooFinanceScraper,
-    DictionarySearcher,
-)
-
 import speech_recognition as sr
 import time
 
+from features.dictionary import DictionarySearcher
+from features.google import GoogleHandler
+from features.imdb import IMDbScraper
+from features.speedtest import SpeedTester
+from features.translate import TranslatorHandler
+from features.weather import WeatherHandler
+from features.yahoo_finance import YahooFinanceScraper
+from gtts import gTTS
+from playsound import playsound
 
-class VirtualAssistant:
+
+class VirtualAssistant():
+
     def __init__(self):
+        """
+        Initializes the virtual assistant
+        """
+
         self.recognizer = sr.Recognizer()
-        self.COMMANDS = [
+
+        self.ACCEPTED_COMMANDS = [
             "how are you?",
             "what time is it?",
             "where is <location>?",
@@ -30,213 +34,235 @@ class VirtualAssistant:
             "translate <text> to <language>",
         ]
 
-    def get_commands(self):
-        """
-        Prints out the available commands to the user.
+    def print_commands(self):
+        """Prints out the available commands to the user."""
 
-        :returns: None
-
-        """
         print("Here are the following commands you may ask: ")
-        for command in self.COMMANDS:
+
+        for command in self.ACCEPTED_COMMANDS:
             print(command)
+
         time.sleep(1)
-
-    def greet(self):
-        """
-        Responds with a greeting depending on the time of day.
-
-        :returns: None
-
-        """
-        current_time = time.localtime()
-        current_hour = current_time.tm_hour
-        if 6 <= current_hour <= 11:
-            self.respond(
-                "Good morning! I'm Marius, your virtual assistant. What can I do for you?"
-            )
-        elif 12 <= current_hour <= 16:
-            self.respond(
-                "Good afternoon! I'm Marius, your virtual assistant. What can I do for you?"
-            )
-        elif 17 <= current_hour < 20:
-            self.respond(
-                "Good evening! I'm Marius, your virtual assistant. What can I do for you?"
-            )
-        else:
-            self.respond(
-                "Good night! I'm Marius, your virtual assistant. What can I do for you?"
-            )
-
-    def listen(self):
-        """
-        Activates user's microphone and takes in the user's response.
-
-        :returns: str
-
-        """
-        with sr.Microphone() as source:
-            self.respond("I'm listening...")
-            self.recognizer.pause_threshold = 1
-            self.recognizer.adjust_for_ambient_noise(source, duration=1)
-            audio = self.recognizer.listen(source)
-        data = ""
-        try:
-            data = self.recognizer.recognize_google(audio)
-            print("You said: " + data)
-        except sr.UnknownValueError:
-            self.respond("I didn't quite get that.")
-        except sr.RequestError as e:
-            self.respond("Say that again please.")
-        return data
 
     def respond(self, audio_string, language="en"):
         """
-        Activates the voice response.
+        Activates the voice response
 
-        :param audio_string: The audio string from the user.
-        :type audio_string: str
-        :returns: None
-
+        :param audio_string: Audio string from the user
+        :param language: Chosen language code for responses, default English
+        :return: None
         """
+
         print(audio_string)
         tts = gTTS(text=audio_string, lang=language)
         tts.save("speech.mp3")
         playsound("speech.mp3")
 
-    def digital_assistant(self, data):
+    def greet(self):
+        """Responds with a greeting depending on the time of day"""
+
+        current_time = time.localtime()
+        current_hour = current_time.tm_hour
+
+        if 5 <= current_hour <= 11:
+            time_of_day = "Morning"
+        elif 12 <= current_hour <= 16:
+            time_of_day = "Afternoon"
+        else:
+            time_of_day = "Evening"
+
+        self.respond(f"Good {time_of_day}! I'm Marius, your virtual assistant. What can I do for you?")
+
+    def listen(self):
+        """Activates user's microphone and returns the user's command as a string"""
+
+        with sr.Microphone() as source:
+            self.respond("I'm listening...")
+            self.recognizer.pause_threshold = 1
+            self.recognizer.adjust_for_ambient_noise(source, duration=1)
+            audio = self.recognizer.listen(source)
+
+        try:
+            command_in_text = self.recognizer.recognize_google(audio)
+            print("You said: " + command_in_text)
+            return command_in_text
+
+        except sr.UnknownValueError:
+            self.respond("I didn't quite get that.")
+
+        except sr.RequestError as e:
+            self.respond("Say that again please.")
+
+    def respond_to_command(self, command):
         """
-        Handles the responses for user commands.
+        Handles the responses for user commands
 
-        :param data: The spoken user command.
-        :type data: str
-        :returns: bool
-
+        :param command: The spoken user command in text
+        :return: True, if user wishes to continue; False otherwise
         """
-        listening = True
 
-        if data:
-            if "how are you" in data.lower():
+        keep_listening = True
+
+        if command:
+
+            command = command.lower()
+            
+            if "how are you" in command:
                 self.respond("I am well, thanks!")
 
-            elif "what time is it" in data.lower():
+            elif "what time is it" in command:
                 current_time = time.strftime("%I:%M %p")
                 self.respond(f"The time is {current_time}.")
 
-            elif "where is" in data.lower():
-                data = data.split(" ")
-                location = " ".join(data[2:])
+            elif "where is" in command:
+                command = command.split(" ")
+                location = " ".join(command[2:])
+
                 self.respond(f"Hold on, I will show you where {location} is.")
 
                 try:
                     google = GoogleHandler()
                     url = google.google_maps_search(location)
                     google.open_webpage(url)
-                except Exception as e:
+
+                except Exception:
                     self.respond(f"Sorry, I cannot find the location of {location}.")
 
-            elif "search for" in data.lower():
-                data = data.split(" ")
-                query = data[2:]
+            elif "search for" in command:
+                command = command.split(" ")
+                query = command[2:]
                 query = " ".join(query)
+
                 self.respond(f"Hold on, I am conducting a Google search for {query}.")
 
                 try:
                     google = GoogleHandler()
                     url = google.google_search(query)
                     google.open_webpage(url)
-                except Exception as e:
+
+                except Exception:
                     self.respond(
                         f"Sorry, I cannot perform the Google search for {query}."
                     )
 
-            elif "check the weather" in data.lower():
+            elif "check the weather" in command:
                 self.respond("Okay, I am checking the weather for you right now.")
+
                 try:
                     weather = WeatherHandler()
                     forecast = weather.check_weather()
                     self.respond(forecast)
-                except Exception as e:
+
+                except Exception:
                     self.respond("Sorry, I cannot retrieve the weather information.")
 
-            elif "check ratings for" in data.lower():
-                data = data.split(" ")
-                query = data[3:]
+            elif "check ratings for" in command:
+                command = command.split(" ")
+                query = command[3:]
                 query = " ".join(query)
+
                 self.respond(f"Okay, I am checking the ratings for {query}.")
+
                 try:
                     imdb = IMDbScraper()
                     review = imdb.get_movie_review(query)
                     self.respond(review)
-                except Exception as e:
+
+                except Exception:
                     self.respond(f"Sorry, I cannot find the ratings for {query}.")
 
-            elif "define" in data.lower():
-                data = data.split(" ")
-                word = data[1]
+            elif "define" in command:
+                command = command.split(" ")
+                word = command[1]
+
                 self.respond(f"Okay, I am checking the definitions of {word}.")
+
                 try:
                     dictionary = DictionarySearcher()
                     definitions = dictionary.search_definition(word)
                     self.respond(definitions)
-                except Exception as e:
+
+                except Exception:
                     self.respond(
                         f"Sorry, I cannot find {word} in the English dictionary."
                     )
 
-            elif "speed test" in data.lower():
+            elif "speed test" in command:
                 self.respond("Okay, I will perform a speed test for you.")
+
                 try:
                     speedtest = SpeedTester()
                     results = speedtest.speed_check()
                     self.respond(results)
-                except Exception as e:
+
+                except Exception:
                     self.respond("Sorry, I cannot perform a speed test.")
 
-            elif "stock price" in data.lower():
-                stock = data.split(" ")[-1]
+            elif "stock price" in command:
+                stock = command.split(" ")[-1]
+
                 self.respond(f"Okay, I will find the stock price of {stock}")
+
                 try:
                     yahoo = YahooFinanceScraper()
-                    stock_price_info = yahoo.get_stock_price(data)
+                    stock_price_info = yahoo.get_stock_price(command)
                     self.respond(stock_price_info)
+
                 except:
                     self.respond(f"Sorry, I cannot find the stock price of {stock}.")
 
-            elif "translate" in data.lower():
-                data = data.split(" ")
-                language = data[-1]
-                text = " ".join(data[1:-2])
+            elif "translate" in command:
+
+                command = command.split(" ")
+                language = command[-1]
+                text = " ".join(command[1:-2])
+
                 self.respond(f"Okay, I will translate {text} to {language}.")
+
                 try:
                     translator = TranslatorHandler()
                     translated, pronunciation, language_code = translator.translate(
                         text, language.lower()
                     )
+
                     if pronunciation is None:
                         print(translated)
                     else:
                         print(pronunciation)
+
                     self.respond(translated, language=language_code)
+
                 except Exception as e:
                     self.respond("Sorry, I cannot do this translation.")
 
-            elif "stop listening" in data.lower() or "goodbye" in data.lower():
-                self.respond("Goodbye!")
-                listening = False
+            elif "stop listening" in command or "goodbye" in command:
+                self.respond("Okay, goodbye!")
+                keep_listening = False
 
-        return listening
+            elif "print" in command and "command" in command:
+                self.respond("Okay, I will re-print available commands for you.")
+                self.print_commands()
+
+            else:
+                self.respond("That's not a valid command. Try again.")
+
+        return keep_listening
+
+    def activate(self):
+        """Activates the virtual assistant"""
+
+        keep_listening = True
+
+        while keep_listening:
+            command = self.listen()
+            keep_listening = self.respond_to_command(command)
 
 
 def main():
     assistant = VirtualAssistant()
     assistant.greet()
-    listening = True
-    assistant.get_commands()
-    while listening == True:
-        data = assistant.listen()
-        listening = assistant.digital_assistant(data)
-
+    assistant.print_commands()
+    assistant.activate()
 
 if __name__ == "__main__":
     main()
