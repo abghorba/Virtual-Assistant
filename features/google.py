@@ -1,5 +1,6 @@
 import os
 import time
+import webbrowser
 
 from googlesearch import search
 
@@ -8,7 +9,7 @@ class GoogleHandler():
 
     def open_webpage(self, url):
         """
-        Opens a url webpage on Google Chrome
+        Opens a url webpage on default browser
 
         :param url: String url of webpage
         :return: True if webpage opens successfully; False otherwise
@@ -20,8 +21,7 @@ class GoogleHandler():
         success = False
 
         try:
-            webpage = '/usr/bin/open -a "/Applications/Google Chrome.app" ' + url
-            os.system(webpage)
+            webbrowser.open(url)
             time.sleep(3)
             success = True
 

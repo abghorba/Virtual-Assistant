@@ -1,6 +1,9 @@
+import logging
+import os
 import speech_recognition as sr
 import time
 
+from datetime import datetime
 from features.dictionary import DictionarySearcher
 from features.google import GoogleHandler
 from features.imdb import IMDbScraper
@@ -12,12 +15,26 @@ from gtts import gTTS
 from playsound import playsound
 
 
+def format_log():
+    """Formats the log page."""
+
+    log_filename = datetime.now().strftime("%d%m%Y%H%M%S") + "-session"
+    log_filepath = os.getcwd() + f"/logs/{log_filename}.log"
+    
+    logging.basicConfig(level=logging.INFO,
+                        format="%(asctime)s - %(module)s.py - %(funcName)s - [%(levelname)s] %(message)s",
+                        handlers=[logging.FileHandler(log_filepath), logging.StreamHandler()])
+
+
 class VirtualAssistant():
 
     def __init__(self):
         """
         Initializes the virtual assistant
         """
+
+        # Format the log file for current session
+        format_log()
 
         self.recognizer = sr.Recognizer()
 
@@ -53,7 +70,7 @@ class VirtualAssistant():
         :return: None
         """
 
-        print(audio_string)
+        logging.info("Marius: " + audio_string)
         tts = gTTS(text=audio_string, lang=language)
         tts.save("speech.mp3")
         playsound("speech.mp3")
@@ -84,7 +101,7 @@ class VirtualAssistant():
 
         try:
             command_in_text = self.recognizer.recognize_google(audio)
-            print("You said: " + command_in_text)
+            logging.info("You said: " + command_in_text)
             return command_in_text
 
         except sr.UnknownValueError:
@@ -142,7 +159,7 @@ class VirtualAssistant():
 
                 except Exception:
                     self.respond(
-                        f"Sorry, I cannot perform the Google search for {query}."
+                        f"Sorry, I cannot perform a Google search for {query}."
                     )
 
             elif "check the weather" in command:
@@ -259,6 +276,7 @@ class VirtualAssistant():
 
 
 def main():
+    format_log()
     assistant = VirtualAssistant()
     assistant.greet()
     assistant.print_commands()
