@@ -3,5 +3,5 @@ env/
 .pytest_cache/
 .vscode/
 .DS_Store.
-config.py
+.env
 speech.mp3
