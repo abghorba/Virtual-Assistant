@@ -9,7 +9,8 @@ from features.weather import WeatherHandler
 from features.yahoo_finance import YahooFinanceScraper
 
 
-class TestGoogleHandler:
+class TestGoogleHandler():
+
     @pytest.mark.parametrize(
         "location,expected_url,expected_result",
         [
@@ -28,16 +29,26 @@ class TestGoogleHandler:
         ],
     )
     def test_google_maps_search(self, location, expected_url, expected_result):
+        """Tests the google_maps_search function."""
+
         google = GoogleHandler()
+
         if not location:
+
             with pytest.raises(ValueError) as err_info:
                 location_url = google.google_maps_search(location)
+
             assert expected_result in str(err_info.value)
+
         else:
+
             location_url = google.google_maps_search(location)
+
             assert isinstance(location_url, str)
             assert location_url == expected_url
+
             opened_webpage = google.open_webpage(location_url)
+
             assert opened_webpage == expected_result
 
     @pytest.mark.parametrize(
@@ -58,20 +69,31 @@ class TestGoogleHandler:
         ],
     )
     def test_google_search(self, query, expected_url, expected_result):
+        """Tests the google_search function."""
+
         google = GoogleHandler()
+
         if not query:
+
             with pytest.raises(ValueError) as err_info:
                 query_url = google.google_search(query)
+
             assert expected_result in str(err_info.value)
+
         else:
+
             query_url = google.google_search(query)
+
             assert isinstance(query_url, str)
             assert query_url == expected_url
+
             opened_webpage = google.open_webpage(query_url)
+
             assert opened_webpage == expected_result
 
 
-class TestIMDbScraper:
+class TestIMDbScraper():
+
     @pytest.mark.parametrize(
         "movie_title,expected",
         [
@@ -82,6 +104,8 @@ class TestIMDbScraper:
         ],
     )
     def test_imdb_url(self, movie_title, expected):
+        """Tests the get_imdb_url function."""
+
         scraper = IMDbScraper()
         if not movie_title:
             with pytest.raises(ValueError) as err_info:
@@ -111,8 +135,11 @@ class TestIMDbScraper:
         ],
     )
     def test_find_imdb(self, imdb_url, expected):
+        """Tests the find_imdb function."""
+
         scraper = IMDbScraper()
         imdb_info = scraper.find_imdb(imdb_url)
+
         assert isinstance(imdb_info, dict)
         assert len(imdb_info) == 2
         assert imdb_info == expected
@@ -133,6 +160,8 @@ class TestIMDbScraper:
         ],
     )
     def test_get_movie_info(self, movie_title, expected):
+        """Tests the get_movie_review function."""
+
         scraper = IMDbScraper()
         if not movie_title:
             with pytest.raises(ValueError) as err_info:
@@ -144,8 +173,11 @@ class TestIMDbScraper:
             assert movie_review == expected
 
 
-class TestWeatherHandler:
+class TestWeatherHandler():
+
     def test_get_location(self):
+        """Tests the get_location function."""
+
         weather = WeatherHandler()
 
         # This works for my personal location.
@@ -153,32 +185,38 @@ class TestWeatherHandler:
         location = weather.get_location()
         assert isinstance(location, list)
         assert location[0] == "Irvine"
+
         # To protect personal privacy, just checking
         # the scraped location is close enough.
         assert (float(location[1]) - 33.6600) < 0.1
         assert (float(location[2]) - -117.8264) < 0.1
 
     def test_get_weather_json(self):
+        """Tests the get_weather_json function."""
         weather = WeatherHandler()
         latitude = "33.6600"
         longitude = "-117.8300"
         json_data = weather.get_weather_json(latitude, longitude)
+
         assert isinstance(json_data, dict)
         assert "main" in json_data
         assert "weather" in json_data
         assert "wind" in json_data
 
     def test_check_weather(self):
+        """Tests the check_weather function."""
+
         weather = WeatherHandler()
         forecast = weather.check_weather()
+
         assert isinstance(forecast, str)
         assert "The weather in Irvine is" in forecast
         assert "degrees Fahrenheit with a humidity of" in forecast
         assert "wind speeds of" in forecast
-        print(forecast)
 
 
-class TestYahooFinanceScraper:
+class TestYahooFinanceScraper():
+
     @pytest.mark.parametrize(
         "query,expected",
         [
@@ -189,39 +227,54 @@ class TestYahooFinanceScraper:
         ],
     )
     def test_get_yahoo_finance_url(self, query, expected):
+        """Tests the get_yahoo_finance_url function."""
+
         yahoo = YahooFinanceScraper()
+
         if not query:
+
             with pytest.raises(ValueError) as err_info:
                 yahoo_finance_url = yahoo.get_yahoo_finance_url(query)
+
             assert expected in str(err_info.value)
+
         else:
+
             yahoo_finance_url = yahoo.get_yahoo_finance_url(query)
             assert isinstance(yahoo_finance_url, str)
             assert yahoo_finance_url == expected
 
-    # As of April 3, 2022
+    # As of April 8, 2022
     @pytest.mark.parametrize(
         "query,expected",
         [
-            ("stock price of Tesla", "The stock price is $1,084.59 per share."),
-            ("stock price of Costco", "The stock price is $575.57 per share."),
-            ("stock price of Apple", "The stock price is $174.31 per share."),
+            ("stock price of Tesla", "The stock price is $1,025.49 per share."),
+            ("stock price of Costco", "The stock price is $600.04 per share."),
+            ("stock price of Apple", "The stock price is $170.09 per share."),
             ("", "Parameter 'query' cannot be blank."),
         ],
     )
     def test_get_stock_price(self, query, expected):
+        """Tests the get_stock_price function."""
+
         yahoo = YahooFinanceScraper()
+
         if not query:
+
             with pytest.raises(ValueError) as err_info:
                 stock_price_info = yahoo.get_stock_price(query)
+
             assert expected in str(err_info.value)
+
         else:
+
             stock_price_info = yahoo.get_stock_price(query)
             assert isinstance(stock_price_info, str)
             assert stock_price_info == expected
 
 
-class TestDictionarySearcher:
+class TestDictionarySearcher():
+
     @pytest.mark.parametrize(
         "word,expected",
         [
@@ -264,18 +317,27 @@ class TestDictionarySearcher:
         ],
     )
     def test_search_definition(self, word, expected):
+        """Tests the search_definition function."""
+
         dictionary = DictionarySearcher()
+
         if not word:
+
             with pytest.raises(ValueError) as err_info:
                 definition = dictionary.search_definition(word)
+
             assert expected in str(err_info.value)
+
         else:
+
             definition = dictionary.search_definition(word)
+
             assert isinstance(definition, str)
             assert definition == expected
 
 
-class TestTranslator:
+class TestTranslator():
+
     @pytest.mark.parametrize(
         "text,language,expected_translation,expected_pronounciation,expected_langcode",
         [
@@ -298,29 +360,34 @@ class TestTranslator:
             ),
         ],
     )
-    def test_translate(
-        self,
-        text,
-        language,
-        expected_translation,
-        expected_pronounciation,
-        expected_langcode,
-    ):
+    def test_translate(self, text, language, expected_translation,
+                       expected_pronounciation, expected_langcode):
+        """Tests the translate function."""
+
         translator = TranslatorHandler()
+
         if not (text and language):
+
             with pytest.raises(ValueError) as err_info:
                 translated_text = translator.translate(text, language)
+
             assert expected_translation in str(err_info.value)
+
         else:
+
             translated_text = translator.translate(text, language)
+
             assert translated_text[0] == expected_translation
             assert translated_text[1] == expected_pronounciation
             assert translated_text[2] == expected_langcode
 
 
-class TestSpeedTester:
+class TestSpeedTester():
+
     def test_speed_test(self):
-        speedtest_ = SpeedTester()
-        speedtest_result = speedtest_.speed_check()
+        """Tests the speed_check function."""
+
+        speedtest = SpeedTester()
+        speedtest_result = speedtest.speed_check()
+
         assert isinstance(speedtest_result, str)
-        print(speedtest_result)

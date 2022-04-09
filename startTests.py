@@ -5,6 +5,7 @@ import sys
 
 from datetime import datetime
 
+
 if len(sys.argv) != 2:
     raise Exception("Correct usage: python startTests.py <test_name>")
 

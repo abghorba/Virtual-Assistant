@@ -2,8 +2,8 @@
 A virtual assistant built in Python which allows the user to speak commands and receive voice responses.
 
 <h2> Setting Up </h2>
-In order to use the full features of the virtual assistant, you must create a file called config.py and insert the following line of code,
-replacing YOUR_API_KEY with an API key received from https://openweathermap.org/api
+In order to use the full features of the virtual assistant, you must create a .env file using the provided .env.exmaple file
+and replace YOUR_API_KEY with an API key received from https://openweathermap.org/api
 
         OPEN_WEATHER_API_KEY = YOUR_API_KEY
 

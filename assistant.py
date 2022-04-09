@@ -28,15 +28,24 @@ def format_log():
 
 class VirtualAssistant():
 
-    def __init__(self):
+    def __init__(self, audio_on=True):
         """
         Initializes the virtual assistant
-        """
 
-        # Format the log file for current session
-        format_log()
+        :param audio_on: Audio response will play if True; default True
+        """
+        
+        # Toggle audio
+        self.audio_on = audio_on
 
         self.recognizer = sr.Recognizer()
+        self.dictionary = DictionarySearcher()
+        self.google = GoogleHandler()
+        self.imdb = IMDbScraper()
+        self.speedtest = SpeedTester()
+        self.translator = TranslatorHandler()
+        self.weather = WeatherHandler()
+        self.yahoo_finance = YahooFinanceScraper()
 
         self.ACCEPTED_COMMANDS = [
             "how are you?",
@@ -50,6 +59,9 @@ class VirtualAssistant():
             "stock price of <company>",
             "translate <text> to <language>",
         ]
+
+        # For testing purposes, save the last response.
+        self.last_response = ""
 
     def print_commands(self):
         """Prints out the available commands to the user."""
@@ -70,10 +82,14 @@ class VirtualAssistant():
         :return: None
         """
 
+        self.last_response = audio_string   
+
         logging.info("Marius: " + audio_string)
         tts = gTTS(text=audio_string, lang=language)
         tts.save("speech.mp3")
-        playsound("speech.mp3")
+
+        if self.audio_on:
+            playsound("speech.mp3")
 
     def greet(self):
         """Responds with a greeting depending on the time of day"""
@@ -120,148 +136,138 @@ class VirtualAssistant():
 
         keep_listening = True
 
-        if command:
+        if not command:
+            raise Exception("No command given.")
 
-            command = command.lower()
-            
-            if "how are you" in command:
-                self.respond("I am well, thanks!")
+        if "how are you" in command.lower():
+            self.respond("I am well, thanks!")
 
-            elif "what time is it" in command:
-                current_time = time.strftime("%I:%M %p")
-                self.respond(f"The time is {current_time}.")
+        elif "what time is it" in command.lower():
+            current_time = time.strftime("%I:%M %p")
+            self.respond(f"The time is {current_time}.")
 
-            elif "where is" in command:
-                command = command.split(" ")
-                location = " ".join(command[2:])
+        elif "where is" in command.lower():
+            command = command.split(" ")
+            location = " ".join(command[2:])
 
-                self.respond(f"Hold on, I will show you where {location} is.")
+            self.respond(f"Hold on, I will show you where {location} is.")
 
-                try:
-                    google = GoogleHandler()
-                    url = google.google_maps_search(location)
-                    google.open_webpage(url)
+            try:
+                url = self.google.google_maps_search(location)
+                self.google.open_webpage(url)
 
-                except Exception:
-                    self.respond(f"Sorry, I cannot find the location of {location}.")
+            except Exception:
+                self.respond(f"Sorry, I cannot find the location of {location}.")
 
-            elif "search for" in command:
-                command = command.split(" ")
-                query = command[2:]
-                query = " ".join(query)
+        elif "search for" in command.lower():
+            command = command.split(" ")
+            query = command[2:]
+            query = " ".join(query)
 
-                self.respond(f"Hold on, I am conducting a Google search for {query}.")
+            self.respond(f"Hold on, I am conducting a Google search for {query}.")
 
-                try:
-                    google = GoogleHandler()
-                    url = google.google_search(query)
-                    google.open_webpage(url)
+            try:
+                url = self.google.google_search(query)
+                self.google.open_webpage(url)
 
-                except Exception:
-                    self.respond(
-                        f"Sorry, I cannot perform a Google search for {query}."
-                    )
+            except Exception:
+                self.respond(
+                    f"Sorry, I cannot perform a Google search for {query}."
+                )
 
-            elif "check the weather" in command:
-                self.respond("Okay, I am checking the weather for you right now.")
+        elif "check the weather" in command.lower():
+            self.respond("Okay, I am checking the weather for you right now.")
 
-                try:
-                    weather = WeatherHandler()
-                    forecast = weather.check_weather()
-                    self.respond(forecast)
+            try:
+                forecast = self.weather.check_weather()
+                self.respond(forecast)
 
-                except Exception:
-                    self.respond("Sorry, I cannot retrieve the weather information.")
+            except Exception:
+                self.respond("Sorry, I cannot retrieve the weather information.")
 
-            elif "check ratings for" in command:
-                command = command.split(" ")
-                query = command[3:]
-                query = " ".join(query)
+        elif "check ratings for" in command.lower():
+            command = command.split(" ")
+            query = command[3:]
+            query = " ".join(query)
 
-                self.respond(f"Okay, I am checking the ratings for {query}.")
+            self.respond(f"Okay, I am checking the ratings for {query}.")
 
-                try:
-                    imdb = IMDbScraper()
-                    review = imdb.get_movie_review(query)
-                    self.respond(review)
+            try:
+                review = self.imdb.get_movie_review(query)
+                self.respond(review)
 
-                except Exception:
-                    self.respond(f"Sorry, I cannot find the ratings for {query}.")
+            except Exception:
+                self.respond(f"Sorry, I cannot find the ratings for {query}.")
 
-            elif "define" in command:
-                command = command.split(" ")
-                word = command[1]
+        elif "define" in command.lower():
+            command = command.split(" ")
+            word = command[1]
 
-                self.respond(f"Okay, I am checking the definitions of {word}.")
+            self.respond(f"Okay, I am checking the definitions of {word}.")
 
-                try:
-                    dictionary = DictionarySearcher()
-                    definitions = dictionary.search_definition(word)
-                    self.respond(definitions)
+            try:
+                definitions = self.dictionary.search_definition(word)
+                self.respond(definitions)
 
-                except Exception:
-                    self.respond(
-                        f"Sorry, I cannot find {word} in the English dictionary."
-                    )
+            except Exception:
+                self.respond(
+                    f"Sorry, I cannot find {word} in the English dictionary."
+                )
 
-            elif "speed test" in command:
-                self.respond("Okay, I will perform a speed test for you.")
+        elif "speed test" in command.lower():
+            self.respond("Okay, I will perform a speed test for you.")
 
-                try:
-                    speedtest = SpeedTester()
-                    results = speedtest.speed_check()
-                    self.respond(results)
+            try:
+                results = self.speedtest.speed_check()
+                self.respond(results)
 
-                except Exception:
-                    self.respond("Sorry, I cannot perform a speed test.")
+            except Exception:
+                self.respond("Sorry, I cannot perform a speed test.")
 
-            elif "stock price" in command:
-                stock = command.split(" ")[-1]
+        elif "stock price" in command.lower():
+            stock = command.split(" ")[-1]
 
-                self.respond(f"Okay, I will find the stock price of {stock}")
+            self.respond(f"Okay, I will find the stock price of {stock}")
 
-                try:
-                    yahoo = YahooFinanceScraper()
-                    stock_price_info = yahoo.get_stock_price(command)
-                    self.respond(stock_price_info)
+            try:
+                stock_price_info = self.yahoo.get_stock_price(command)
+                self.respond(stock_price_info)
 
-                except:
-                    self.respond(f"Sorry, I cannot find the stock price of {stock}.")
+            except:
+                self.respond(f"Sorry, I cannot find the stock price of {stock}.")
 
-            elif "translate" in command:
+        elif "translate" in command.lower():
 
-                command = command.split(" ")
-                language = command[-1]
-                text = " ".join(command[1:-2])
+            command = command.split(" ")
+            language = command[-1]
+            text = " ".join(command[1:-2])
 
-                self.respond(f"Okay, I will translate {text} to {language}.")
+            self.respond(f"Okay, I will translate {text} to {language}.")
 
-                try:
-                    translator = TranslatorHandler()
-                    translated, pronunciation, language_code = translator.translate(
-                        text, language.lower()
-                    )
+            try:
+                translated, pronunciation, language_code = \
+                    self.translator.translate(text, language.lower())
 
-                    if pronunciation is None:
-                        print(translated)
-                    else:
-                        print(pronunciation)
+                if pronunciation is None:
+                    print(translated)
+                else:
+                    print(pronunciation)
 
-                    self.respond(translated, language=language_code)
+                self.respond(translated, language=language_code)
 
-                except Exception as e:
-                    self.respond("Sorry, I cannot do this translation.")
+            except Exception as e:
+                self.respond("Sorry, I cannot do this translation.")
 
-            elif "stop listening" in command or "goodbye" in command:
-                self.respond("Okay, goodbye!")
-                keep_listening = False
+        elif "stop listening" in command.lower() or "goodbye" in command.lower():
+            self.respond("Okay, goodbye!")
+            keep_listening = False
 
-            elif "print" in command and "command" in command:
-                self.respond("Okay, I will re-print available commands for you.")
-                self.print_commands()
+        elif "print" in command.lower() and "command" in command.lower():
+            self.respond("Okay, I will re-print available commands for you.")
+            self.print_commands()
 
-            else:
-                self.respond("That's not a valid command. Try again.")
+        else:
+            self.respond("That's not a valid command. Try again.")
 
         return keep_listening
 
