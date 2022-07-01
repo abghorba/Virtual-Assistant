@@ -28,16 +28,21 @@ def format_log():
 
 class VirtualAssistant():
 
-    def __init__(self, audio_on=True):
+    def __init__(self, audio_on=False, open_webpages=False):
         """
         Initializes the virtual assistant
 
-        :param audio_on: Audio response will play if True; default True
+        :param audio_on: Audio response will play if True; default False
+        :param open_webpages: Webpages will open if True; default False
         """
         
         # Toggle audio
         self.audio_on = audio_on
 
+        # Toggle opening webpages
+        self.open_webpage = open_webpages
+
+        # Initialize features
         self.recognizer = sr.Recognizer()
         self.dictionary = DictionarySearcher()
         self.google = GoogleHandler()
@@ -154,7 +159,9 @@ class VirtualAssistant():
 
             try:
                 url = self.google.google_maps_search(location)
-                self.google.open_webpage(url)
+
+                if self.open_webpage:
+                    self.google.open_webpage(url)
 
             except Exception:
                 self.respond(f"Sorry, I cannot find the location of {location}.")
@@ -168,7 +175,9 @@ class VirtualAssistant():
 
             try:
                 url = self.google.google_search(query)
-                self.google.open_webpage(url)
+                
+                if self.open_webpage:
+                    self.google.open_webpage(url)
 
             except Exception:
                 self.respond(
@@ -283,7 +292,7 @@ class VirtualAssistant():
 
 def main():
     format_log()
-    assistant = VirtualAssistant()
+    assistant = VirtualAssistant(audio_on=True, open_webpages=True)
     assistant.greet()
     assistant.print_commands()
     assistant.activate()

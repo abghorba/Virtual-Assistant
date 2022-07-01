@@ -19,13 +19,21 @@ class TestGoogleHandler():
                 "https://www.google.com/maps/place/Santa%20Barbara",
                 True,
             ),
-            ("Miami", "https://www.google.com/maps/place/Miami", True),
+            (
+                "Miami",
+                "https://www.google.com/maps/place/Miami",
+                True
+            ),
             (
                 "New York City",
                 "https://www.google.com/maps/place/New%20York%20City",
                 True,
             ),
-            ("", "", "Parameter 'location' cannot be blank."),
+            (
+                "",
+                "",
+                "Parameter 'location' cannot be blank."
+            ),
         ],
     )
     def test_google_maps_search(self, location, expected_url, expected_result):
@@ -59,13 +67,21 @@ class TestGoogleHandler():
                 "https://finance.yahoo.com/quote/TSLA/",
                 True,
             ),
-            ("Elon Musk Wikipedia", "https://en.wikipedia.org/wiki/Elon_Musk", True),
+            (
+                "Elon Musk Wikipedia",
+                "https://en.wikipedia.org/wiki/Elon_Musk",
+                True
+            ),
             (
                 "PewDiePie Youtube Channel",
-                "https://www.youtube.com/user/PewDiePie",
+                "https://www.youtube.com/user/pewdiepie",
                 True,
             ),
-            ("", "", "Parameter 'query' cannot be blank."),
+            (
+                "",
+                "",
+                "Parameter 'query' cannot be blank."
+            ),
         ],
     )
     def test_google_search(self, query, expected_url, expected_result):
@@ -97,10 +113,22 @@ class TestIMDbScraper():
     @pytest.mark.parametrize(
         "movie_title,expected",
         [
-            ("the karate kid", "https://www.imdb.com/title/tt0087538/"),
-            ("the silence of the lambs", "https://www.imdb.com/title/tt0102926/"),
-            ("jobs", "https://www.imdb.com/title/tt2357129/"),
-            ("", "Parameter 'movie_title' cannot be blank."),
+            (
+                "the karate kid",
+                "https://www.imdb.com/title/tt0087538/"
+            ),
+            (
+                "the silence of the lambs",
+                "https://www.imdb.com/title/tt0102926/"
+            ),
+            (
+                "jobs",
+                "https://www.imdb.com/title/tt2357129/"
+            ),
+            (
+                "",
+                "Parameter 'movie_title' cannot be blank."
+            ),
         ],
     )
     def test_imdb_url(self, movie_title, expected):
@@ -121,17 +149,32 @@ class TestIMDbScraper():
         [
             (
                 "https://www.imdb.com/title/tt0087538/",
-                {"title": "The Karate Kid (1984)", "metascore": "60"},
+                {
+                    "title": "The Karate Kid (1984)",
+                    "metascore": "60"
+                },
             ),
             (
                 "https://www.imdb.com/title/tt0102926/",
-                {"title": "The Silence of the Lambs (1991)", "metascore": "85"},
+                {
+                    "title": "The Silence of the Lambs (1991)",
+                    "metascore": "85"
+                },
             ),
             (
                 "https://www.imdb.com/title/tt2357129/",
-                {"title": "Jobs (2013)", "metascore": "44"},
+                {
+                    "title": "Jobs (2013)",
+                    "metascore": "44"
+                },
             ),
-            ("", {"title": "", "metascore": ""}),
+            (
+                "",
+                {
+                    "title": "",
+                    "metascore": ""
+                }
+            ),
         ],
     )
     def test_find_imdb(self, imdb_url, expected):
@@ -155,8 +198,14 @@ class TestIMDbScraper():
                 "the silence of the lambs",
                 "The Silence of the Lambs (1991) has an IMDB Score of 8.6 and a Metascore of 85.",
             ),
-            ("jobs", "Jobs (2013) has an IMDB Score of 6.0 and a Metascore of 44."),
-            ("", "Parameter 'movie_title' cannot be blank."),
+            (
+                "jobs",
+                "Jobs (2013) has an IMDB Score of 6.0 and a Metascore of 44."
+            ),
+            (
+                "",
+                "Parameter 'movie_title' cannot be blank."
+            ),
         ],
     )
     def test_get_movie_info(self, movie_title, expected):
@@ -220,10 +269,22 @@ class TestYahooFinanceScraper():
     @pytest.mark.parametrize(
         "query,expected",
         [
-            ("stock price of Tesla", "https://finance.yahoo.com/quote/TSLA/"),
-            ("stock price of Costco", "https://finance.yahoo.com/quote/COST/"),
-            ("stock price of Apple", "https://finance.yahoo.com/quote/AAPL/"),
-            ("", "Parameter 'query' cannot be blank."),
+            (
+                "stock price of Tesla",
+                "https://finance.yahoo.com/quote/TSLA/"
+            ),
+            (
+                "stock price of Walmart",
+                "https://finance.yahoo.com/quote/WMT/"
+            ),
+            (
+                "stock price of Apple",
+                "https://finance.yahoo.com/quote/AAPL/"
+            ),
+            (
+                "",
+                "Parameter 'query' cannot be blank."
+            ),
         ],
     )
     def test_get_yahoo_finance_url(self, query, expected):
@@ -244,14 +305,25 @@ class TestYahooFinanceScraper():
             assert isinstance(yahoo_finance_url, str)
             assert yahoo_finance_url == expected
 
-    # As of April 8, 2022
     @pytest.mark.parametrize(
         "query,expected",
         [
-            ("stock price of Tesla", "The stock price is $1,025.49 per share."),
-            ("stock price of Costco", "The stock price is $600.04 per share."),
-            ("stock price of Apple", "The stock price is $170.09 per share."),
-            ("", "Parameter 'query' cannot be blank."),
+            (
+                "stock price of Tesla",
+                "The stock price is $XXX.XX per share."
+            ),
+            (
+                "stock price of Walmart",
+                "The stock price is $XXX.XX per share."
+            ),
+            (
+                "stock price of Apple",
+                "The stock price is $XXX.XX per share."
+            ),
+            (
+                "",
+                "Parameter 'query' cannot be blank."
+            ),
         ],
     )
     def test_get_stock_price(self, query, expected):
@@ -269,8 +341,19 @@ class TestYahooFinanceScraper():
         else:
 
             stock_price_info = yahoo.get_stock_price(query)
+
             assert isinstance(stock_price_info, str)
-            assert stock_price_info == expected
+            assert "The stock price is " in expected
+            assert " per share." in expected
+
+            stock_price_info_list = stock_price_info.split(" ")
+            stock_price = stock_price_info_list[4]
+
+            assert "$" in stock_price
+
+            stock_price = stock_price.replace("$", "").replace(",", "")
+
+            assert float(stock_price) > 0
 
 
 class TestDictionarySearcher():
@@ -313,7 +396,10 @@ class TestDictionarySearcher():
                     "3) Noun: 1856-1943.\n"
                 ),
             ),
-            ("", "Parameter 'word' cannot be blank."),
+            (
+                "",
+                "Parameter 'word' cannot be blank."
+            ),
         ],
     )
     def test_search_definition(self, word, expected):
@@ -341,16 +427,34 @@ class TestTranslator():
     @pytest.mark.parametrize(
         "text,language,expected_translation,expected_pronounciation,expected_langcode",
         [
-            ("Hello world!", "spanish", "¡Hola Mundo!", None, "es"),
-            ("Hello world!", "french", "Bonjour le monde!", None, "fr"),
+            (
+                "Hello world!",
+                "spanish",
+                "¡Hola Mundo!",
+                None,
+                "es"
+            ),
+            (
+                "Hello world!",
+                "french",
+                "Bonjour le monde!",
+                None,
+                "fr"
+            ),
             (
                 "Thank you for testing the virtual assistant.",
                 "russian",
                 "Спасибо за тестирование виртуального помощника.",
-                "Spasibo za testirovaniye virtual'nogo pomoshchnika.",
+                "Spasibo za testirovaniye virtualʹnogo pomoshchnika.",
                 "ru",
             ),
-            ("", "spanish", "Text cannot be blank.", "", ""),
+            (
+                "",
+                "spanish",
+                "Text cannot be blank.",
+                "",
+                ""
+            ),
             (
                 "I don't know what to translate to!",
                 "",

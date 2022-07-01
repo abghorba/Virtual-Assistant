@@ -22,6 +22,7 @@ class IMDbScraper():
         imdb_url = ""
 
         try:
+
             movie_title += " IMDb"
             google = GoogleHandler()
             imdb_url = google.google_search(movie_title)
@@ -43,18 +44,19 @@ class IMDbScraper():
         rating = {"title": "", "metascore": ""}
 
         try:
+
             page = requests.get(imdb_url)
             html_content = page.text
             soup = BeautifulSoup(html_content, "html.parser")
-            title = soup.find(
-                attrs={"data-testid": "hero-title-block__title"}
-            ).get_text()
-            year = soup.find(
-                class_="TitleBlockMetaData__ListItemText-sc-12ein40-2 jedhex"
-            ).get_text()
-            title = f"{title} ({year})"
-            metascore = soup.find(class_="score-meta").get_text()
-            rating["title"] = title
+            title_html = soup.find(attrs={"data-testid": "hero-title-block__title"})
+            title = title_html.get_text()
+            year_html = soup.find(class_="ipc-link ipc-link--baseAlt ipc-link--inherit-color sc-8c396aa2-1 WIUyh")
+            year = year_html.get_text()
+            title_and_year = f"{title} ({year})"
+            metascore_html = soup.find(class_="score-meta")
+            metascore = metascore_html.get_text()
+
+            rating["title"] = title_and_year
             rating["metascore"] = metascore
 
         except Exception:

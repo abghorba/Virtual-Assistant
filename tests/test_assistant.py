@@ -5,7 +5,7 @@ from assistant import VirtualAssistant
 
 class TestVirtualAssistant():
 
-    virtual_assistant = VirtualAssistant(audio_on=False)
+    virtual_assistant = VirtualAssistant()
 
     @pytest.mark.parametrize(
         "command", 
@@ -45,8 +45,14 @@ class TestVirtualAssistant():
     @pytest.mark.parametrize(
         "command,expected", 
         [
-            ("Where is Los Angeles", "Hold on, I will show you where Los Angeles is."),
-            ("Where is New York City", "Hold on, I will show you where New York City is."),
+            (
+                "Where is Los Angeles",
+                "Hold on, I will show you where Los Angeles is."
+            ),
+            (
+                "Where is New York City",
+                "Hold on, I will show you where New York City is."
+            ),
         ]
     )
     def test_response_to_location_command(self, command, expected):
@@ -61,8 +67,14 @@ class TestVirtualAssistant():
     @pytest.mark.parametrize(
         "command,expected", 
         [
-            ("Search for Elon Musk's Wikipedia page", "Hold on, I am conducting a Google search for Elon Musk's Wikipedia page."),
-            ("Search for Leetcode", "Hold on, I am conducting a Google search for Leetcode."),
+            (
+                "Search for Elon Musk's Wikipedia page",
+                "Hold on, I am conducting a Google search for Elon Musk's Wikipedia page."
+            ),
+            (
+                "Search for Leetcode",
+                "Hold on, I am conducting a Google search for Leetcode."
+            ),
         ]
     )
     def test_response_to_search_command(self, command, expected):
@@ -96,8 +108,14 @@ class TestVirtualAssistant():
     @pytest.mark.parametrize(
         "command,expected", 
         [
-            ("Check ratings for The Karate Kid", "The Karate Kid (1984) has an IMDB Score of 7.3 and a Metascore of 60."),
-            ("Check ratings for The Silence of the Lambs", "The Silence of the Lambs (1991) has an IMDB Score of 8.6 and a Metascore of 85."),
+            (
+                "Check ratings for The Karate Kid",
+                "The Karate Kid (1984) has an IMDB Score of 7.3 and a Metascore of 60."
+            ),
+            (
+                "Check ratings for The Silence of the Lambs",
+                "The Silence of the Lambs (1991) has an IMDB Score of 8.6 and a Metascore of 85."
+            ),
         ]
     )
     def test_response_to_ratings_command(self, command, expected):
@@ -112,8 +130,14 @@ class TestVirtualAssistant():
     @pytest.mark.parametrize(
         "command,expected", 
         [
-            ("Define sun", "The star that is the source of light and heat for the planets in the solar system"),
-            ("Define bug", "General term for any insect or similar creeping or crawling invertebrate"),
+            (
+                "Define sun",
+                "The star that is the source of light and heat for the planets in the solar system"
+            ),
+            (
+                "Define bug",
+                "General term for any insect or similar creeping or crawling invertebrate"
+            ),
         ]
     )
     def test_response_to_define_command(self, command, expected):
@@ -159,8 +183,14 @@ class TestVirtualAssistant():
     @pytest.mark.parametrize(
         "command,expected", 
         [
-            ("Translate Hello world to Spanish", "Hola Mundo"),
-            ("Translate Hello world to French", "Bonjour le monde"),
+            (
+                "Translate Hello world to Spanish",
+                "Hola Mundo"
+            ),
+            (
+                "Translate Hello world to French",
+                "Bonjour le monde"
+            ),
         ]
     )
     def test_response_to_translate_command(self, command, expected):

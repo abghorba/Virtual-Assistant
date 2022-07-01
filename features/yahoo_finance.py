@@ -21,6 +21,7 @@ class YahooFinanceScraper():
         yahoo_finance_url = ""
 
         try:
+
             query += " Yahoo Finance"
             google = GoogleHandler()
             yahoo_finance_url = google.google_search(query)
@@ -44,13 +45,15 @@ class YahooFinanceScraper():
         stock_price_information = ""
 
         try:
+
             yahoo_finance_url = self.get_yahoo_finance_url(query)
-            page = requests.get(yahoo_finance_url)
+            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'}
+            page = requests.get(yahoo_finance_url, headers=headers)
             html_content = page.text
             soup = BeautifulSoup(html_content, "html.parser")
-            stock_price = soup.find(
-                class_="Trsdu(0.3s) Fw(b) Fz(36px) Mb(-4px) D(ib)"
-            ).get_text()
+
+            stock_html = soup.find(class_="Fw(b) Fz(36px) Mb(-4px) D(ib)")
+            stock_price = stock_html.get_text()
             stock_price_information = f"The stock price is ${stock_price} per share."
 
         except Exception:
