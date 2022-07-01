@@ -2,14 +2,15 @@
 A virtual assistant built in Python which allows the user to speak commands and receive voice responses.
 
 <h2> Setting Up </h2>
-In order to use the full features of the virtual assistant, you must create a .env file using the provided .env.exmaple file
-and replace YOUR_API_KEY with an API key received from https://openweathermap.org/api
+In order to use the full features of the virtual assistant, you must get an API key from https://openweathermap.org/api
+and replace the following in initialize.sh
 
-        OPEN_WEATHER_API_KEY = YOUR_API_KEY
+        OPEN_WEATHER_API_KEY=""
 
-Then, download the dependencies from requirements.txt:
+After this is done, you can create a virtual environment, install dependencies, and create your .env file by running:
 
-        pip install -r requirements.txt
+        sh initialize.sh
+
 
 <h2> Usage </h2>
 Now that we have everything set up, we are ready to go!
