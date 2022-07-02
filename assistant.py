@@ -1,5 +1,3 @@
-import logging
-import os
 import speech_recognition as sr
 import time
 
@@ -13,17 +11,6 @@ from features.weather import WeatherHandler
 from features.yahoo_finance import YahooFinanceScraper
 from gtts import gTTS
 from playsound import playsound
-
-
-def format_log():
-    """Formats the log page."""
-
-    log_filename = datetime.now().strftime("%d%m%Y%H%M%S") + "-session"
-    log_filepath = os.getcwd() + f"/logs/{log_filename}.log"
-    
-    logging.basicConfig(level=logging.INFO,
-                        format="%(asctime)s - %(module)s.py - %(funcName)s - [%(levelname)s] %(message)s",
-                        handlers=[logging.FileHandler(log_filepath), logging.StreamHandler()])
 
 
 class VirtualAssistant():
@@ -89,7 +76,7 @@ class VirtualAssistant():
 
         self.last_response = audio_string   
 
-        logging.info("Marius: " + audio_string)
+        print("Marius: " + audio_string)
         tts = gTTS(text=audio_string, lang=language)
         tts.save("speech.mp3")
 
@@ -122,7 +109,7 @@ class VirtualAssistant():
 
         try:
             command_in_text = self.recognizer.recognize_google(audio)
-            logging.info("You said: " + command_in_text)
+            print("You said: " + command_in_text)
             return command_in_text
 
         except sr.UnknownValueError:
@@ -239,7 +226,7 @@ class VirtualAssistant():
             self.respond(f"Okay, I will find the stock price of {stock}")
 
             try:
-                stock_price_info = self.yahoo.get_stock_price(command)
+                stock_price_info = self.yahoo_finance.get_stock_price(command)
                 self.respond(stock_price_info)
 
             except:
@@ -291,7 +278,6 @@ class VirtualAssistant():
 
 
 def main():
-    format_log()
     assistant = VirtualAssistant(audio_on=True, open_webpages=True)
     assistant.greet()
     assistant.print_commands()

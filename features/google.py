@@ -1,8 +1,12 @@
+import ssl
 import time
 import webbrowser
 
 from googlesearch import search
 
+# Temporary workaround due to the following in Python 3.10:
+# DeprecationWarning: ssl.PROTOCOL_TLS is deprecated
+ssl._create_default_https_context = ssl._create_unverified_context
 
 class GoogleHandler():
 
