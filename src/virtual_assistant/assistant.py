@@ -2,15 +2,15 @@ import speech_recognition as sr
 import time
 
 from datetime import datetime
-from features.dictionary import DictionarySearcher
-from features.google import GoogleHandler
-from features.imdb import IMDbScraper
-from features.speedtest import SpeedTester
-from features.translate import TranslatorHandler
-from features.weather import WeatherHandler
-from features.yahoo_finance import YahooFinanceScraper
 from gtts import gTTS
 from playsound import playsound
+from src.features.dictionary import DictionarySearcher
+from src.features.google import GoogleHandler
+from src.features.imdb import IMDbScraper
+from src.features.speedtest import SpeedTester
+from src.features.translate import TranslatorHandler
+from src.features.weather import WeatherHandler
+from src.features.yahoo_finance import YahooFinanceScraper
 
 
 class VirtualAssistant():

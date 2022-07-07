@@ -1,7 +1,7 @@
 import requests
 
 from bs4 import BeautifulSoup
-from features.google import GoogleHandler
+from src.features.google import GoogleHandler
 from imdb import IMDb
 
 

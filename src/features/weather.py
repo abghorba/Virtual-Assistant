@@ -1,7 +1,7 @@
 import requests
 
 from bs4 import BeautifulSoup
-from config import OPEN_WEATHER_API_KEY
+from src.features.configs import OPEN_WEATHER_API_KEY
 
 
 class WeatherHandler():

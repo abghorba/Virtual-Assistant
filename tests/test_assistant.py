@@ -1,6 +1,6 @@
 import pytest
 
-from assistant import VirtualAssistant
+from src.virtual_assistant.assistant import VirtualAssistant
 
 
 class TestVirtualAssistant():

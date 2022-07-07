@@ -1,4 +1,3 @@
-
 #!/bin/sh
 
 if [ ! -d "env" ]; then
@@ -13,7 +12,7 @@ if [ ! -d "env" ]; then
         # Install Homebrew
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
         echo "Homebrew installed!"
-    fi
+    f
 
     echo "Installing dependencies..."
     brew install portaudio
