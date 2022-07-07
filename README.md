@@ -17,7 +17,7 @@ Now that we have everything set up, we are ready to go!
 
 You can run the virtual assistant by using the command
 
-        python assistant.py
+        python activate.py
 
 The virtual assistant supports the following commands:
 
