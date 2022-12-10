@@ -10,15 +10,15 @@ class TestYahooFinanceScraper():
         [
             (
                 "stock price of Tesla",
-                "https://finance.yahoo.com/quote/TSLA/"
+                "https://finance.yahoo.com/quote/TSLA"
             ),
             (
                 "stock price of Walmart",
-                "https://finance.yahoo.com/quote/WMT/"
+                "https://finance.yahoo.com/quote/WMT"
             ),
             (
                 "stock price of Apple",
-                "https://finance.yahoo.com/quote/AAPL/"
+                "https://finance.yahoo.com/quote/AAPL"
             ),
             (
                 "",
@@ -42,7 +42,7 @@ class TestYahooFinanceScraper():
 
             yahoo_finance_url = yahoo.get_yahoo_finance_url(query)
             assert isinstance(yahoo_finance_url, str)
-            assert yahoo_finance_url == expected
+            assert expected in yahoo_finance_url
 
     @pytest.mark.parametrize(
         "query,expected",

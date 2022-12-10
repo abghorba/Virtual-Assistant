@@ -26,7 +26,7 @@ class TestTranslator():
                 "Thank you for testing the virtual assistant.",
                 "russian",
                 "Спасибо за тестирование виртуального помощника.",
-                "Spasibo za testirovaniye virtualʹnogo pomoshchnika.",
+                "Spasibo za testirovaniye virtual'nogo pomoshchnika.",
                 "ru",
             ),
             (

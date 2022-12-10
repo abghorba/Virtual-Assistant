@@ -1,8 +1,9 @@
 import requests
-
 from bs4 import BeautifulSoup
+from imdb import Cinemagoer
+
 from src.features.google import GoogleHandler
-from imdb import IMDb
+from src.features.utilities import HTTP_STATUS_OK, REQUEST_HEADERS
 
 
 class IMDbScraper():
@@ -45,7 +46,11 @@ class IMDbScraper():
 
         try:
 
-            page = requests.get(imdb_url)
+            page = requests.get(imdb_url, headers=REQUEST_HEADERS)
+
+            if page.status_code != HTTP_STATUS_OK:
+                print(f"GET: {imdb_url} return status code {page.status_code}")
+
             html_content = page.text
             soup = BeautifulSoup(html_content, "html.parser")
             title_html = soup.find(attrs={"data-testid": "hero-title-block__title"})
@@ -53,10 +58,12 @@ class IMDbScraper():
             year_html = soup.find(class_="ipc-link ipc-link--baseAlt ipc-link--inherit-color sc-8c396aa2-1 WIUyh")
             year = year_html.get_text()
             title_and_year = f"{title} ({year})"
+
+            rating["title"] = title_and_year
+
             metascore_html = soup.find(class_="score-meta")
             metascore = metascore_html.get_text()
 
-            rating["title"] = title_and_year
             rating["metascore"] = metascore
 
         except Exception:
@@ -86,10 +93,10 @@ class IMDbScraper():
             metascore = imdb_info["metascore"]
 
             # Use IMDb object after scraping the title off the webpage
-            moviesDB = IMDb()
-            movies = moviesDB.search_movie(imdb_title)
+            movies_db = Cinemagoer()
+            movies = movies_db.search_movie(imdb_title)
             id = movies[0].getID()
-            movie_info = moviesDB.get_movie(id)
+            movie_info = movies_db.get_movie(id)
             title = movie_info["title"]
             year = movie_info["year"]
             imdb_score = movie_info["rating"]

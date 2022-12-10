@@ -67,8 +67,8 @@ class TestGoogleHandler():
                 True
             ),
             (
-                "PewDiePie Youtube Channel",
-                "https://www.youtube.com/user/pewdiepie",
+                "Game of Thrones HBO",
+                "https://www.hbo.com/game-of-thrones",
                 True,
             ),
             (

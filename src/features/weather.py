@@ -1,7 +1,7 @@
 import requests
-
 from bs4 import BeautifulSoup
-from src.features.configs import OPEN_WEATHER_API_KEY
+
+from src.features.utilities import OPEN_WEATHER_API_KEY, HTTP_STATUS_OK, REQUEST_HEADERS
 
 
 class WeatherHandler():
@@ -19,7 +19,11 @@ class WeatherHandler():
 
         try:
             url = "https://iplocation.com/"
-            page = requests.get(url)
+            page = requests.get(url, headers=REQUEST_HEADERS)
+
+            if page.status_code != HTTP_STATUS_OK:
+                print(f"GET: {url} return status code {page.status_code}")
+
             soup = BeautifulSoup(page.content, "html.parser")
             city = soup.find(class_="city").get_text()
             latitude = soup.find(class_="lat").get_text()

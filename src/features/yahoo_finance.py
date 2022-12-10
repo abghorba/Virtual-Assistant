@@ -1,7 +1,8 @@
 import requests
-
 from bs4 import BeautifulSoup
+
 from src.features.google import GoogleHandler
+from src.features.utilities import HTTP_STATUS_OK, REQUEST_HEADERS
 
 
 class YahooFinanceScraper():
@@ -36,7 +37,7 @@ class YahooFinanceScraper():
         Scrapes the Yahoo Finance website for the stock price
 
         :param query: Google search query containing company name
-        :return: String containg the company's stock price
+        :return: String containing the company's stock price
         """
 
         if not query:
@@ -47,8 +48,12 @@ class YahooFinanceScraper():
         try:
             
             yahoo_finance_url = self.get_yahoo_finance_url(query)
-            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'}
-            page = requests.get(yahoo_finance_url, headers=headers)
+
+            page = requests.get(yahoo_finance_url, headers=REQUEST_HEADERS)
+
+            if page.status_code != HTTP_STATUS_OK:
+                print(f"GET: {yahoo_finance_url} return status code {page.status_code}")
+
             html_content = page.text
             soup = BeautifulSoup(html_content, "html.parser")
             print("got soup")
