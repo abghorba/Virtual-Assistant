@@ -1,7 +1,6 @@
 import speech_recognition as sr
 import time
 
-from datetime import datetime
 from gtts import gTTS
 from playsound import playsound
 from src.features.dictionary import DictionarySearcher

@@ -3,6 +3,7 @@ from speedtest import Speedtest
 
 ONE_MEGABYTE_IN_BYTES = 1000000
 
+
 class SpeedTester():
 
     def speed_check(self):
