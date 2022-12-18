@@ -8,6 +8,7 @@ from googlesearch import search
 # DeprecationWarning: ssl.PROTOCOL_TLS is deprecated
 ssl._create_default_https_context = ssl._create_unverified_context
 
+
 class GoogleHandler():
 
     def open_webpage(self, url):
