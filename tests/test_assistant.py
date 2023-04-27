@@ -208,9 +208,7 @@ class TestVirtualAssistant:
         assert keep_listening
         assert response == "Okay, I will re-print available commands for you."
 
-    @pytest.mark.parametrize(
-        "command", ["Thank you, goodbye!", "Okay, stop listening."]
-    )
+    @pytest.mark.parametrize("command", ["Thank you, goodbye!", "Okay, stop listening."])
     def test_response_to_goodbye_command(self, command):
         """Tests if the command routes to goodbye responses."""
 

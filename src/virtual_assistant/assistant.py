@@ -95,9 +95,7 @@ class VirtualAssistant:
         else:
             time_of_day = "Evening"
 
-        self.respond(
-            f"Good {time_of_day}! I'm Marius, your virtual assistant. What can I do for you?"
-        )
+        self.respond(f"Good {time_of_day}! I'm Marius, your virtual assistant. What can I do for you?")
 
     def listen(self):
         """Activates user's microphone and returns the user's command as a string"""
@@ -237,9 +235,7 @@ class VirtualAssistant:
             self.respond(f"Okay, I will translate {text} to {language}.")
 
             try:
-                translated, pronunciation, language_code = self.translator.translate(
-                    text, language.lower()
-                )
+                translated, pronunciation, language_code = self.translator.translate(text, language.lower())
 
                 if pronunciation is None:
                     print(translated)

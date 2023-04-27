@@ -24,9 +24,7 @@ class DictionarySearcher:
 
             for type in definitions:
                 for meaning in definitions[type]:
-                    current_meaning = (
-                        f"{str(definition_number)}) {type}: {meaning.capitalize()}.\n"
-                    )
+                    current_meaning = f"{str(definition_number)}) {type}: {meaning.capitalize()}.\n"
                     definitions_text.append(current_meaning)
                     definition_number += 1
 

@@ -52,9 +52,7 @@ class IMDbScraper:
             soup = BeautifulSoup(html_content, "html.parser")
             title_html = soup.find(attrs={"data-testid": "hero-title-block__title"})
             title = title_html.get_text()
-            year_html = soup.find(
-                class_="ipc-link ipc-link--baseAlt ipc-link--inherit-color sc-8c396aa2-1 WIUyh"
-            )
+            year_html = soup.find(class_="ipc-link ipc-link--baseAlt ipc-link--inherit-color sc-8c396aa2-1 WIUyh")
             year = year_html.get_text()
             title_and_year = f"{title} ({year})"
 

@@ -28,17 +28,11 @@ class SpeedTester:
             server_sponsor = speedtest_results["server"]["sponsor"]
             client_ip = speedtest_results["client"]["ip"]
             client_isp = speedtest_results["client"]["isp"]
-            download_speed_in_mb = round(
-                (speedtest_results["download"] / ONE_MEGABYTE_IN_BYTES), 2
-            )
-            upload_speed_in_mb = round(
-                (speedtest_results["upload"] / ONE_MEGABYTE_IN_BYTES), 2
-            )
+            download_speed_in_mb = round((speedtest_results["download"] / ONE_MEGABYTE_IN_BYTES), 2)
+            upload_speed_in_mb = round((speedtest_results["upload"] / ONE_MEGABYTE_IN_BYTES), 2)
             ping_in_ms = round((speedtest_results["ping"]), 2)
 
-            print(
-                f"Connected to {server_sponsor} server\nLocation : {server_country}, {server_name}"
-            )
+            print(f"Connected to {server_sponsor} server\nLocation : {server_country}, {server_name}")
             print(f"IP address : {client_ip}\nService Provider : {client_isp}")
             print(
                 f"Download speed  : {download_speed_in_mb} mpbs\nUpload speed : {upload_speed_in_mb} mpbs\nPing : "
