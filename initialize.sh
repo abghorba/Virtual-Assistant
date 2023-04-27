@@ -14,10 +14,18 @@ if [ ! -d "env" ]; then
         echo "Homebrew installed!"
     fi
 
-    echo "Installing dependencies..."
+    echo "Installing portaudio..."
     brew install portaudio
+
+    echo "Upgrading pip..."
+    python3 -m pip install --upgrade pip
+
+    echo "Installing pip dependencies..."
     source env/bin/activate
     pip install -r requirements.txt
+
+    echo "Installing pre-commit hooks..."
+    pre-commit install
     echo "Done!"
 fi
 

@@ -1,8 +1,7 @@
-from googletrans import Translator, LANGCODES
+from googletrans import LANGCODES, Translator
 
 
-class TranslatorHandler():
-    
+class TranslatorHandler:
     def translate(self, text, language):
         """
         Takes a text string and translates to
@@ -12,7 +11,7 @@ class TranslatorHandler():
         :param language: The language to translate to
         :return: List [text, pronounciation, language code]
         """
-        
+
         if not text:
             raise ValueError("Text cannot be blank.")
 
@@ -30,7 +29,7 @@ class TranslatorHandler():
                 translated_text.pronunciation,
                 language_code,
             ]
-            
+
         except Exception:
             print("This text cannot be translated.")
 

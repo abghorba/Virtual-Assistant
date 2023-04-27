@@ -3,8 +3,7 @@ import pytest
 from src.features.speedtest import SpeedTester
 
 
-class TestSpeedTester():
-
+class TestSpeedTester:
     def test_speed_test(self):
         """Tests the speed_check function."""
 

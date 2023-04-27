@@ -1,8 +1,9 @@
-import speech_recognition as sr
 import time
 
+import speech_recognition as sr
 from gtts import gTTS
 from playsound import playsound
+
 from src.features.dictionary import DictionarySearcher
 from src.features.google import GoogleHandler
 from src.features.imdb import IMDbScraper
@@ -12,8 +13,7 @@ from src.features.weather import WeatherHandler
 from src.features.yahoo_finance import YahooFinanceScraper
 
 
-class VirtualAssistant():
-
+class VirtualAssistant:
     def __init__(self, audio_on=False, open_webpages=False):
         """
         Initializes the virtual assistant
@@ -21,7 +21,7 @@ class VirtualAssistant():
         :param audio_on: Audio response will play if True; default False
         :param open_webpages: Webpages will open if True; default False
         """
-        
+
         # Toggle audio
         self.audio_on = audio_on
 
@@ -73,7 +73,7 @@ class VirtualAssistant():
         :return: None
         """
 
-        self.last_response = audio_string   
+        self.last_response = audio_string
 
         print("Marius: " + audio_string)
         tts = gTTS(text=audio_string, lang=language)
@@ -95,7 +95,9 @@ class VirtualAssistant():
         else:
             time_of_day = "Evening"
 
-        self.respond(f"Good {time_of_day}! I'm Marius, your virtual assistant. What can I do for you?")
+        self.respond(
+            f"Good {time_of_day}! I'm Marius, your virtual assistant. What can I do for you?"
+        )
 
     def listen(self):
         """Activates user's microphone and returns the user's command as a string"""
@@ -161,14 +163,12 @@ class VirtualAssistant():
 
             try:
                 url = self.google.google_search(query)
-                
+
                 if self.open_webpage:
                     self.google.open_webpage(url)
 
             except Exception:
-                self.respond(
-                    f"Sorry, I cannot perform a Google search for {query}."
-                )
+                self.respond(f"Sorry, I cannot perform a Google search for {query}.")
 
         elif "check the weather" in command.lower():
             self.respond("Okay, I am checking the weather for you right now.")
@@ -205,9 +205,7 @@ class VirtualAssistant():
                 self.respond(definitions)
 
             except Exception:
-                self.respond(
-                    f"Sorry, I cannot find {word} in the English dictionary."
-                )
+                self.respond(f"Sorry, I cannot find {word} in the English dictionary.")
 
         elif "speed test" in command.lower():
             self.respond("Okay, I will perform a speed test for you.")
@@ -232,7 +230,6 @@ class VirtualAssistant():
                 self.respond(f"Sorry, I cannot find the stock price of {stock}.")
 
         elif "translate" in command.lower():
-
             command = command.split(" ")
             language = command[-1]
             text = " ".join(command[1:-2])
@@ -240,8 +237,9 @@ class VirtualAssistant():
             self.respond(f"Okay, I will translate {text} to {language}.")
 
             try:
-                translated, pronunciation, language_code = \
-                    self.translator.translate(text, language.lower())
+                translated, pronunciation, language_code = self.translator.translate(
+                    text, language.lower()
+                )
 
                 if pronunciation is None:
                     print(translated)
@@ -281,6 +279,7 @@ def main():
     assistant.greet()
     assistant.print_commands()
     assistant.activate()
+
 
 if __name__ == "__main__":
     main()

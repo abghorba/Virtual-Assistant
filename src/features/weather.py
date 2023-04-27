@@ -1,17 +1,16 @@
 import requests
 from bs4 import BeautifulSoup
 
-from src.features.utilities import OPEN_WEATHER_API_KEY, HTTP_STATUS_OK, REQUEST_HEADERS
+from src.features.utilities import HTTP_STATUS_OK, OPEN_WEATHER_API_KEY, REQUEST_HEADERS
 
 
-class WeatherHandler():
-    
+class WeatherHandler:
     def get_location(self):
         """
         Scrapes information from www.iplocation.com to
         retrieve the user's location by using the user's
         IP Address
-        
+
         return: List [city, latitude, longitude]
         """
 

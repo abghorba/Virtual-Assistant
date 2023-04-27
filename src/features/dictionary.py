@@ -1,8 +1,7 @@
 from PyDictionary import PyDictionary
 
 
-class DictionarySearcher():
-
+class DictionarySearcher:
     def search_definition(self, word):
         """
         Searches for the definition of a word and returns
@@ -18,15 +17,13 @@ class DictionarySearcher():
         definition = ""
         dictionary = PyDictionary()
 
-        try:            
+        try:
             definitions = dictionary.meaning(word)
             definition_number = 1
             definitions_text = []
 
             for type in definitions:
-
                 for meaning in definitions[type]:
-
                     current_meaning = (
                         f"{str(definition_number)}) {type}: {meaning.capitalize()}.\n"
                     )

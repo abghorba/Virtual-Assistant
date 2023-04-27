@@ -6,8 +6,7 @@ from src.features.google import GoogleHandler
 from src.features.utilities import HTTP_STATUS_OK, REQUEST_HEADERS
 
 
-class IMDbScraper():
-
+class IMDbScraper:
     def get_imdb_url(self, movie_title):
         """
         Takes in a movie name and conducts a Google
@@ -23,7 +22,6 @@ class IMDbScraper():
         imdb_url = ""
 
         try:
-
             movie_title += " IMDb"
             google = GoogleHandler()
             imdb_url = google.google_search(movie_title)
@@ -45,7 +43,6 @@ class IMDbScraper():
         rating = {"title": "", "metascore": ""}
 
         try:
-
             page = requests.get(imdb_url, headers=REQUEST_HEADERS)
 
             if page.status_code != HTTP_STATUS_OK:
@@ -55,7 +52,9 @@ class IMDbScraper():
             soup = BeautifulSoup(html_content, "html.parser")
             title_html = soup.find(attrs={"data-testid": "hero-title-block__title"})
             title = title_html.get_text()
-            year_html = soup.find(class_="ipc-link ipc-link--baseAlt ipc-link--inherit-color sc-8c396aa2-1 WIUyh")
+            year_html = soup.find(
+                class_="ipc-link ipc-link--baseAlt ipc-link--inherit-color sc-8c396aa2-1 WIUyh"
+            )
             year = year_html.get_text()
             title_and_year = f"{title} ({year})"
 
@@ -102,7 +101,7 @@ class IMDbScraper():
             imdb_score = movie_info["rating"]
 
             review = f"{title} ({year}) has an IMDB Score of {imdb_score} and a Metascore of {metascore}."
-            
+
         except Exception:
             print("Movie cannot be found.")
 

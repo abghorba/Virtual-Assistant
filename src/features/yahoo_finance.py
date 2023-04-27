@@ -5,8 +5,7 @@ from src.features.google import GoogleHandler
 from src.features.utilities import HTTP_STATUS_OK, REQUEST_HEADERS
 
 
-class YahooFinanceScraper():
-
+class YahooFinanceScraper:
     def get_yahoo_finance_url(self, query):
         """
         Takes in a raw query and conducts a Google
@@ -22,7 +21,6 @@ class YahooFinanceScraper():
         yahoo_finance_url = ""
 
         try:
-
             query += " Yahoo Finance"
             google = GoogleHandler()
             yahoo_finance_url = google.google_search(query)
@@ -46,7 +44,6 @@ class YahooFinanceScraper():
         stock_price_information = ""
 
         try:
-            
             yahoo_finance_url = self.get_yahoo_finance_url(query)
 
             page = requests.get(yahoo_finance_url, headers=REQUEST_HEADERS)

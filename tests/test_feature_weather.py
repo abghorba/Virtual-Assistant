@@ -3,8 +3,7 @@ import pytest
 from src.features.weather import WeatherHandler
 
 
-class TestWeatherHandler():
-
+class TestWeatherHandler:
     def test_get_location(self):
         """Tests the get_location function."""
 

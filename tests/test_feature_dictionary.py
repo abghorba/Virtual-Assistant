@@ -3,8 +3,7 @@ import pytest
 from src.features.dictionary import DictionarySearcher
 
 
-class TestDictionarySearcher():
-
+class TestDictionarySearcher:
     @pytest.mark.parametrize(
         "word,expected",
         [
@@ -43,10 +42,7 @@ class TestDictionarySearcher():
                     "3) Noun: 1856-1943.\n"
                 ),
             ),
-            (
-                "",
-                "Parameter 'word' cannot be blank."
-            ),
+            ("", "Parameter 'word' cannot be blank."),
         ],
     )
     def test_search_definition(self, word, expected):
@@ -55,14 +51,12 @@ class TestDictionarySearcher():
         dictionary = DictionarySearcher()
 
         if not word:
-
             with pytest.raises(ValueError) as err_info:
                 definition = dictionary.search_definition(word)
 
             assert expected in str(err_info.value)
 
         else:
-
             definition = dictionary.search_definition(word)
 
             assert isinstance(definition, str)

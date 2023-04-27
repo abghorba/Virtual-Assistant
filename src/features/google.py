@@ -9,8 +9,7 @@ from googlesearch import search
 ssl._create_default_https_context = ssl._create_unverified_context
 
 
-class GoogleHandler():
-
+class GoogleHandler:
     def open_webpage(self, url):
         """
         Opens a url webpage on default browser
@@ -69,7 +68,7 @@ class GoogleHandler():
         :param location: Location to be searched on Google Maps
         :return: String containing the Google maps url
         """
-        
+
         if not location:
             raise ValueError("Parameter 'location' cannot be blank.")
 

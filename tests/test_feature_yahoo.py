@@ -3,27 +3,14 @@ import pytest
 from src.features.yahoo_finance import YahooFinanceScraper
 
 
-class TestYahooFinanceScraper():
-
+class TestYahooFinanceScraper:
     @pytest.mark.parametrize(
         "query,expected",
         [
-            (
-                "stock price of Tesla",
-                "https://finance.yahoo.com/quote/TSLA"
-            ),
-            (
-                "stock price of Walmart",
-                "https://finance.yahoo.com/quote/WMT"
-            ),
-            (
-                "stock price of Apple",
-                "https://finance.yahoo.com/quote/AAPL"
-            ),
-            (
-                "",
-                "Parameter 'query' cannot be blank."
-            ),
+            ("stock price of Tesla", "https://finance.yahoo.com/quote/TSLA"),
+            ("stock price of Walmart", "https://finance.yahoo.com/quote/WMT"),
+            ("stock price of Apple", "https://finance.yahoo.com/quote/AAPL"),
+            ("", "Parameter 'query' cannot be blank."),
         ],
     )
     def test_get_yahoo_finance_url(self, query, expected):
@@ -32,14 +19,12 @@ class TestYahooFinanceScraper():
         yahoo = YahooFinanceScraper()
 
         if not query:
-
             with pytest.raises(ValueError) as err_info:
                 yahoo_finance_url = yahoo.get_yahoo_finance_url(query)
 
             assert expected in str(err_info.value)
 
         else:
-
             yahoo_finance_url = yahoo.get_yahoo_finance_url(query)
             assert isinstance(yahoo_finance_url, str)
             assert expected in yahoo_finance_url
@@ -47,22 +32,10 @@ class TestYahooFinanceScraper():
     @pytest.mark.parametrize(
         "query,expected",
         [
-            (
-                "stock price of Tesla",
-                "The stock price is $XXX.XX per share."
-            ),
-            (
-                "stock price of Walmart",
-                "The stock price is $XXX.XX per share."
-            ),
-            (
-                "stock price of Apple",
-                "The stock price is $XXX.XX per share."
-            ),
-            (
-                "",
-                "Parameter 'query' cannot be blank."
-            ),
+            ("stock price of Tesla", "The stock price is $XXX.XX per share."),
+            ("stock price of Walmart", "The stock price is $XXX.XX per share."),
+            ("stock price of Apple", "The stock price is $XXX.XX per share."),
+            ("", "Parameter 'query' cannot be blank."),
         ],
     )
     def test_get_stock_price(self, query, expected):
@@ -71,14 +44,12 @@ class TestYahooFinanceScraper():
         yahoo = YahooFinanceScraper()
 
         if not query:
-
             with pytest.raises(ValueError) as err_info:
                 stock_price_info = yahoo.get_stock_price(query)
 
             assert expected in str(err_info.value)
 
         else:
-
             stock_price_info = yahoo.get_stock_price(query)
 
             assert isinstance(stock_price_info, str)

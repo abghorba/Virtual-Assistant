@@ -2,27 +2,15 @@ import pytest
 
 from src.features.imdb import IMDbScraper
 
-class TestIMDbScraper():
 
+class TestIMDbScraper:
     @pytest.mark.parametrize(
         "movie_title,expected",
         [
-            (
-                "the karate kid",
-                "https://www.imdb.com/title/tt0087538/"
-            ),
-            (
-                "the silence of the lambs",
-                "https://www.imdb.com/title/tt0102926/"
-            ),
-            (
-                "jobs",
-                "https://www.imdb.com/title/tt2357129/"
-            ),
-            (
-                "",
-                "Parameter 'movie_title' cannot be blank."
-            ),
+            ("the karate kid", "https://www.imdb.com/title/tt0087538/"),
+            ("the silence of the lambs", "https://www.imdb.com/title/tt0102926/"),
+            ("jobs", "https://www.imdb.com/title/tt2357129/"),
+            ("", "Parameter 'movie_title' cannot be blank."),
         ],
     )
     def test_imdb_url(self, movie_title, expected):
@@ -43,32 +31,17 @@ class TestIMDbScraper():
         [
             (
                 "https://www.imdb.com/title/tt0087538/",
-                {
-                    "title": "The Karate Kid (1984)",
-                    "metascore": "60"
-                },
+                {"title": "The Karate Kid (1984)", "metascore": "60"},
             ),
             (
                 "https://www.imdb.com/title/tt0102926/",
-                {
-                    "title": "The Silence of the Lambs (1991)",
-                    "metascore": "85"
-                },
+                {"title": "The Silence of the Lambs (1991)", "metascore": "85"},
             ),
             (
                 "https://www.imdb.com/title/tt2357129/",
-                {
-                    "title": "Jobs (2013)",
-                    "metascore": "44"
-                },
+                {"title": "Jobs (2013)", "metascore": "44"},
             ),
-            (
-                "",
-                {
-                    "title": "",
-                    "metascore": ""
-                }
-            ),
+            ("", {"title": "", "metascore": ""}),
         ],
     )
     def test_find_imdb(self, imdb_url, expected):
@@ -92,14 +65,8 @@ class TestIMDbScraper():
                 "the silence of the lambs",
                 "The Silence of the Lambs (1991) has an IMDB Score of 8.6 and a Metascore of 85.",
             ),
-            (
-                "jobs",
-                "Jobs (2013) has an IMDB Score of 6.0 and a Metascore of 44."
-            ),
-            (
-                "",
-                "Parameter 'movie_title' cannot be blank."
-            ),
+            ("jobs", "Jobs (2013) has an IMDB Score of 6.0 and a Metascore of 44."),
+            ("", "Parameter 'movie_title' cannot be blank."),
         ],
     )
     def test_get_movie_info(self, movie_title, expected):
